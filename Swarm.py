@@ -2,28 +2,36 @@ import numpy as np
 from fontTools.misc.arrayTools import vectorLength
 
 
+###             axis_1 ->
+###  axis_0 || [ sample_1_x , sample_1_y...
+###         \/   sample_2_x , sample_2_y ]
 class Swarm:
-    def __init__(self, number_particles: int, bounds: np.ndarray):
+    def __init__(self, number_particles: int, bounds: tuple, expected_iterations: int = 5000):
         self.number_particles = number_particles
 
-        self.best_fitness = 10
-        self.fitness = np.random.default_rng().uniform(low=8, high=10, size=number_particles)
-
-        self.x_velocity = np.random.default_rng().uniform(low=0.5, high=0.8, size=number_particles)
-        self.x_position = np.random.default_rng().uniform(low=bounds[0][0], high=bounds[0][1], size=number_particles)
-        self.x_local_best = np.random.default_rng().uniform(low=8, high=10, size=number_particles)
-        self.x_global_best = np.random.default_rng().uniform(low=8, high=10)
-
-        self.y_velocity = np.random.default_rng().uniform(low=0.5, high=0.8, size=number_particles)
-        self.y_position = np.random.default_rng().uniform(low=bounds[1][0], high=bounds[1][1], size=number_particles)
-        self.y_local_best = np.random.default_rng().uniform(low=8, high=10, size=number_particles)
-        self.y_global_best = np.random.default_rng().uniform(low=8, high=10)
-
-        self.inertia = 0.729844
-        self.local_cognitive_c1 = 1.496180
-        self.global_cognitive_c2 = 1.496180
+        self.expected_iterations = expected_iterations
 
         self.seed = 42
+        np.random.seed(seed=self.seed)
+
+        self.fitness = np.random.uniform(low=80, high=100, size=number_particles)
+
+        self.banned_particles = np.zeros(number_particles)
+
+        self.velocity = np.random.uniform(low=0.5, high=0.8, size=(number_particles, 30))
+        self.position = np.random.uniform(low=bounds[0] + 0.5, high=bounds[1] - 0.5, size=(number_particles, 30))
+        self.local_best_position = np.random.uniform(low=8, high=10, size=(number_particles, 30))
+        self.global_best_position = np.random.uniform(low=8, high=10, size=(number_particles,))
+
+        self.inertia = np.float64(0.729844)
+        self.inertia_log = []
+
+        self.local_cognitive_c1 = np.float64(1.496180)
+        self.local_cognitive_c1_log = []
+
+        self.global_cognitive_c2 = np.float64(1.496180)
+        self.global_cognitive_c2_log = []
+
         self.bounds = bounds
         self.converged = False
 
@@ -31,117 +39,124 @@ class Swarm:
         self.diversity_log = []
         self.percentage_bound_log = []
         self.avg_velocity_log = []
+        self.stability_log = []
 
-        self.x_history = []
-        self.y_history = []
+        self.history = []
 
-    def sample_control_parameters_randomly(self) -> tuple:
-        self.inertia = np.random.uniform(-1, 1)
-        self.local_cognitive_c1 = np.random.uniform(0, 2)
-        self.global_cognitive_c2 = np.random.uniform(0, 2)
+        self.fitness_stagnation = False
 
-        return self.inertia, self.local_cognitive_c1, self.global_cognitive_c2
+        self.prior_best = np.min(self.fitness_function())
+        self.best_fitness = np.min(self.fitness_function())
 
-    def sample_control_parameters_with_time(self, time: int = 1) -> tuple:
-        self.inertia = 0.4 * (((time - self.number_particles) / self.number_particles) ** 2) + 0.4
-        self.local_cognitive_c1 = -3 * (time / self.number_particles) + 3.5
-        self.global_cognitive_c2 = 3 * (time / self.number_particles) + 0.5
+    def _log_control(self):
+        self.local_cognitive_c1_log.append(self.local_cognitive_c1)
+        self.global_cognitive_c2_log.append(self.global_cognitive_c2)
+        self.inertia_log.append(self.inertia)
 
-        return self.inertia, self.local_cognitive_c1, self.global_cognitive_c2
+    def set_control_parameters(self, local_cognitive, global_cognitive, inertia):
+        self.local_cognitive_c1 = np.float64(local_cognitive)
+        self.global_cognitive_c2 = np.float64(global_cognitive)
+        self.inertia = np.float64(inertia)
+
+    def sample_stagnation(self):
+        self.fitness_stagnation = np.abs(self.best_fitness - self.prior_best) < 0.001
+
+    def sample_control_parameters_randomly(self):
+        self.inertia = np.float64(np.random.uniform(-1, 1))
+        self.local_cognitive_c1 = np.float64(np.random.uniform(0, 4))
+        self.global_cognitive_c2 = np.float64(np.random.uniform(0, 4))
+
+    def sample_control_parameters_with_time(self, time: int = 1):
+        self.inertia = 0.4 * (((time - self.expected_iterations) / self.expected_iterations) ** 2) + 0.4
+        self.local_cognitive_c1 = -3 * (time / self.expected_iterations) + 3.5
+        self.global_cognitive_c2 = 3 * (time / self.expected_iterations) + 0.5
 
     def sample_diversity(self):
-        x_center: float = np.sum(self.x_position) / self.number_particles
-        y_center: float = np.sum(self.y_position) / self.number_particles
+        centers = np.mean(self.position, axis=0)
 
-        np.linalg.norm(self.x_position - x_center) + np.linalg.norm(self.y_position - y_center)
+        # axis 1 = dimension
+        norm = np.linalg.norm(self.position - centers, axis=1)
 
-        self.diversity_log.append(x_center / self.number_particles)
+        self.diversity_log.append(np.mean(norm))
 
-    def sample_boundedness(self):
-        in_x = (self.x_position > self.bounds[0][0]) & (self.x_position < self.bounds[0][1])
-        in_y = (self.y_position > self.bounds[1][0]) & (self.y_position < self.bounds[1][1])
+    def sample_boundedness(self) -> np.ndarray:
+        in_bounds = (self.position > self.bounds[0]) & (self.position < self.bounds[1])
 
-        mask = in_x | in_y
+        particle_mask = np.all(in_bounds, axis=1)
 
-        self.percentage_bound_log.append(np.mean(mask) * 100)
+        self.percentage_bound_log.append(np.mean(particle_mask) * 100)
 
-    def sample_average_velocity(self, prior_x, prior_y):
-        self.avg_velocity_log.append((np.linalg.norm(self.x_position - prior_x) + np.linalg.norm(
-            self.y_position - prior_y)) / self.number_particles)
+        return particle_mask
 
-    def step(self):
+    def sample_average_velocity(self, prior_):
+        self.avg_velocity_log.append(np.mean(np.linalg.norm(self.position - prior_, axis=1)))
+
+    def sample_stability(self):
+        self.stability_log.append(
+            (self.local_cognitive_c1 + self.global_cognitive_c2) < (24 * (1 - self.inertia ** 2)) / (
+                    7 - 5 * self.inertia))
+
+    def step(self, iteration: int = 0) -> tuple:
+        # self.sample_control_parameters_with_time(iteration)
+        self.sample_diversity()
+
+        in_bound_particles = self.sample_boundedness()
+
+        self.sample_stagnation()
+
+        self._log_control()
+        self.sample_stability()
+
         costs = self.fitness_function()
 
-        if np.min(costs) < self.best_fitness:
-            self.best_fitness = np.min(costs)
+        min_cost = np.min(costs)
+        min_particle = np.argmin(costs)
 
-            self.x_global_best = self.x_position[np.argmin(costs)]
-            self.y_global_best = self.y_position[np.argmin(costs)]
+        if min_cost < self.best_fitness and in_bound_particles[min_particle]:
+            self.prior_best = self.best_fitness
+            self.best_fitness = min_cost
 
-        self.best_log.append(self.best_fitness)
+            self.global_best_position = self.position[min_particle].copy()
 
-        for index, cost in enumerate(costs):
-            if cost < self.fitness[index]:
-                self.fitness[index]: float
-                self.fitness[index] = cost
+        self.best_log.append(self.best_fitness.copy())
 
-                self.x_local_best[index]: float
-                self.x_local_best[index] = self.x_position[index]
+        better_mask = costs < self.fitness
 
-                self.y_local_best[index]: float
-                self.y_local_best[index] = self.y_position[index]
+        self.fitness[better_mask] = costs[better_mask]
+        self.local_best_position[better_mask] = self.position[better_mask]
 
-        # self.normalize_velocity(0)
-        # self.normalize_velocity(1)
+        r1 = np.random.uniform(0, 1, size=self.position.shape)
+        r2 = np.random.uniform(0, 1, size=self.position.shape)
 
-        self.sample_diversity()
-        self.sample_boundedness()
+        self.velocity = (self.inertia * self.velocity +
+                         self.local_cognitive_c1 * r1 * (self.local_best_position - self.position) +
+                         self.global_cognitive_c2 * r2 * (self.global_best_position - self.position))
 
-        self.x_velocity = (self.inertia * self.x_velocity
-                           + self.local_cognitive_c1 * np.random.uniform(0, 1) * (self.x_local_best - self.x_position)
-                           + self.global_cognitive_c2 * np.random.uniform(0, 1) * (
-                                   self.x_global_best - self.x_position))
+        self.normalize_velocity()
 
-        self.y_velocity = (self.inertia * self.y_velocity
-                           + self.local_cognitive_c1 * np.random.uniform(0, 1) * (self.y_local_best - self.y_position)
-                           + self.global_cognitive_c2 * np.random.uniform(0, 1) * (
-                                   self.y_global_best - self.y_position))
+        self.history.append(self.position.copy())
 
-        prior_x = self.x_position
-        prior_y = self.y_position
+        self.position += self.velocity
 
-        self.x_history.append(prior_x)
-        self.y_history.append(prior_y)
+        self.sample_average_velocity(self.history[-1])
 
-        self.x_position = self.x_position + self.x_velocity
-        self.y_position = self.y_position + self.y_velocity
+        return min_cost, self.global_best_position
 
-        self.sample_average_velocity(prior_x, prior_y)
+    def normalize_velocity(self):
+        b_min, b_max = self.bounds
 
-        self.converged = self.has_converged()
+        b_range = b_max - b_min
+        midpoint = (b_min + b_max) / 2.0
 
-        return np.min(costs), self.x_global_best, self.y_global_best
-
-    def has_converged(self) -> bool:
-        return (self.local_cognitive_c1 + self.global_cognitive_c2) < (24 * (1 - self.inertia ** 2)) / (
-                7 - 5 * self.inertia)
-
-    def normalize_velocity(self, direction: int = 0):
-        def apply(velocities):
-            return np.tanh((2 / (self.bounds[direction][0] - self.bounds[direction][1])) * (
-                    velocities - ((self.bounds[direction][0] + self.bounds[direction][1]) / 2)))
-
-        if direction == 0:
-            self.x_velocity = apply(self.x_velocity)
-        else:
-            self.y_velocity = apply(self.y_velocity)
+        self.velocity = np.tanh((2.0 / b_range) * (self.velocity - midpoint))
+        assert self.velocity.shape == self.position.shape
 
     def clamp_velocities_simple_bound(self, direction: int = 0):
         def apply(velocities):
-            self.bounds[direction][1]: float
-            self.bounds[direction][0]: float
-            velocity_max: float
-            velocity_max = np.random.uniform(0, 1) * (self.bounds[direction][0] - self.bounds[direction][1])
+            self.bounds[direction][1]: np.float64
+            self.bounds[direction][0]: np.float64
+            velocity_max: np.float64
+            velocity_max = np.random.uniform(0, 1, size=1) * (self.bounds[direction][0] - self.bounds[direction][1])
 
             for index, velocity in enumerate(velocities):
                 if velocity_max < velocity:
@@ -171,9 +186,23 @@ class Swarm:
         else:
             self.y_velocity = apply(self.y_velocity)
 
-    def compute_average_velocity(self) -> float:
+    def compute_average_velocity(self) -> np.float64:
         return (1 / (self.number_particles * self.bounds.ndim)) * (
                 np.sum(self.x_velocity) + np.sum(self.y_velocity.sum()))
 
     def fitness_function(self):
-        return (1 - self.x_position) ** 2 + 100 * (self.y_position - self.x_position ** 2) ** 2
+        n_particles, n_dims = self.position.shape
+
+        # 1. Create the coefficient vector for the dimensions
+        # Shape: (D,) -> Values grow exponentially from 10^0 to 10^6
+        coefficients = (10 ** 6) ** (np.arange(n_dims) / (n_dims - 1))
+
+        # 2. Square the positions (Element-wise)
+        # Shape: (N, D)
+        squared_pos = self.position ** 2
+
+        # 3. Multiply and Sum across dimensions (Axis 1)
+        # Broadcasting (N, D) * (D,) works perfectly here
+        fitness = np.sum(coefficients * squared_pos, axis=1)
+
+        return fitness
