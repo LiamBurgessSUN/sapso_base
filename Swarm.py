@@ -36,9 +36,19 @@ class Swarm:
         self.converged = False
 
         self.best_log = []
+
+        self.fitness_log = []
+        self.fitness_std_log = []
+
         self.diversity_log = []
+        self.diversity_std_log = []
+
         self.percentage_bound_log = []
+        self.percentage_bound_std_log = []
+
         self.avg_velocity_log = []
+        self.avg_velocity_std_log = []
+
         self.stability_log = []
 
         self.history = []
@@ -78,18 +88,21 @@ class Swarm:
         norm = np.linalg.norm(self.position - centers, axis=1)
 
         self.diversity_log.append(np.mean(norm))
+        self.diversity_std_log.append(np.std(norm))
 
     def sample_boundedness(self) -> np.ndarray:
         in_bounds = (self.position > self.bounds[0]) & (self.position < self.bounds[1])
-
         particle_mask = np.all(in_bounds, axis=1)
-
-        self.percentage_bound_log.append(np.mean(particle_mask) * 100)
+        self.percentage_bound_log.append(np.mean(particle_mask))
+        self.percentage_bound_std_log.append(np.std(particle_mask))
 
         return particle_mask
 
-    def sample_average_velocity(self, prior_):
-        self.avg_velocity_log.append(np.mean(np.linalg.norm(self.position - prior_, axis=1)))
+    def sample_average_velocity(self, prior_position):
+        step_sizes = np.linalg.norm(self.position - prior_position, axis=1, ord=2)
+        mean_step_size = np.mean(step_sizes)
+        self.avg_velocity_log.append(mean_step_size)
+        self.avg_velocity_std_log.append(np.std(step_sizes))
 
     def sample_stability(self):
         self.stability_log.append(
@@ -108,6 +121,9 @@ class Swarm:
         self.sample_stability()
 
         costs = self.fitness_function()
+
+        self.fitness_log.append(np.mean(costs))
+        self.fitness_std_log.append(np.std(costs))
 
         min_cost = np.min(costs)
         min_particle = np.argmin(costs)
@@ -132,7 +148,7 @@ class Swarm:
                          self.local_cognitive_c1 * r1 * (self.local_best_position - self.position) +
                          self.global_cognitive_c2 * r2 * (self.global_best_position - self.position))
 
-        self.normalize_velocity()
+        # self.normalize_velocity()
 
         self.history.append(self.position.copy())
 
