@@ -12,7 +12,7 @@ class Swarm:
                  fitness_function: FitnessFunction,
                  expected_iterations: int = 5000,
                  stagnation_threshold: float = 1e-12,
-                 stagnation_patience: int = 100):
+                 stagnation_patience: int = 200):
         self.number_particles = number_particles
 
         self.bounds = fitness_function.bounds
@@ -101,7 +101,6 @@ class Swarm:
     def sample_stability(self) -> bool:
         stable = (self.local_cognitive_c1 + self.global_cognitive_c2) < (24 * (1 - self.inertia ** 2)) / (
                 7 - 5 * self.inertia)
-        self.stability_log.append(stable)
         return stable
 
     def sample_velocities_normalized(self) -> np.array:
@@ -129,10 +128,17 @@ class Swarm:
         self.local_cognitive_c1 = -3 * (time / t_max) + 3.5
         self.global_cognitive_c2 = 3 * (time / t_max) + 0.5
 
+    def sample_control_values(self):
+        self.inertia_log.append(self.inertia)
+        self.local_cognitive_c1_log.append(self.local_cognitive_c1)
+        self.global_cognitive_c2_log.append(self.global_cognitive_c2)
+
     def step(self, iteration: int = 0) -> tuple:
         self.sample_diversity()
         in_bound_particles = self.sample_boundedness()
-        self.sample_stability()
+        self.stability_log.append(self.sample_stability())
+
+        self.sample_control_values()
 
         costs = self.fitness_function()
 

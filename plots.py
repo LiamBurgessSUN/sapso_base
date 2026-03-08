@@ -3,8 +3,76 @@ import numpy as np
 import pandas as pd
 import matplotlib.pyplot as plt
 
+from Swarm import Swarm
 
-def plot_values_line_with_std(num_iterations: int, data_points: list, std_dev: list = None, title: str = ""):
+
+def plot_swarm(swarm: Swarm, func_name: str):
+    plot_values_line_with_std(
+        num_iterations=len(swarm.local_cognitive_c1_log),
+        data_points=swarm.local_cognitive_c1_log,
+        title=f"SAC-SAPSO: {func_name} C1"
+    )
+
+    plot_values_line_with_std(
+        num_iterations=len(swarm.global_cognitive_c2_log),
+        data_points=swarm.global_cognitive_c2_log,
+        title=f"SAC-SAPSO: {func_name} C2"
+    )
+
+    plot_values_line_with_std(
+        num_iterations=len(swarm.inertia_log),
+        data_points=swarm.inertia_log,
+        title=f"SAC-SAPSO: {func_name} Inertia"
+    )
+
+    plot_values_line_with_std(
+        num_iterations=len(swarm.best_log),
+        data_points=swarm.best_log,
+        title=f"SAC-SAPSO: {func_name} Fitness"
+    )
+
+    plot_values_line_with_std(
+        num_iterations=len(swarm.fitness_log),
+        data_points=swarm.fitness_log,
+        std_dev=swarm.fitness_std_log,
+        title=f"SAC-SAPSO: {func_name} Fitness"
+    )
+
+    plot_values_line_with_std(
+        num_iterations=len(swarm.avg_velocity_log),
+        data_points=swarm.avg_velocity_log,
+        std_dev=swarm.avg_velocity_std_log,
+        title=f"SAC-SAPSO: {func_name} Avg Velocity",
+        use_log=True
+    )
+
+    plot_values_line_with_std(
+        num_iterations=len(swarm.diversity_log),
+        data_points=swarm.diversity_log,
+        std_dev=swarm.diversity_std_log,
+        title=f"SAC-SAPSO: {func_name} Diversity"
+    )
+
+    plot_values_line_with_std(
+        num_iterations=len(swarm.percentage_bound_log),
+        data_points=swarm.percentage_bound_log,
+        std_dev=swarm.percentage_bound_std_log,
+        title=f"SAC-SAPSO: {func_name} % Bound"
+    )
+
+    plot_values_line_with_std(
+        num_iterations=len(swarm.stability_log),
+        data_points=swarm.stability_log,
+        title=f"SAC-SAPSO: {func_name} % Stability"
+    )
+
+
+def plot_values_line_with_std(num_iterations: int, data_points: list, std_dev: list = None, title: str = "",
+                              use_log: bool = False):
+    """
+    Plots a professional line graph with an optional standard deviation shadow.
+    Includes a flag for Symmetrical Logarithmic Y-axis scaling to handle values around 0.
+    """
     sns.set_theme(style="whitegrid")
     plt.figure(figsize=(12, 6))
 
@@ -24,28 +92,82 @@ def plot_values_line_with_std(num_iterations: int, data_points: list, std_dev: l
     # 2. Add the Shadow Area (Standard Deviation)
     if std_dev is not None:
         std_array = np.array(std_dev)
-        # fill_between(x, lower_bound, upper_bound)
         plt.fill_between(
             x_values,
             y_values - std_array,
             y_values + std_array,
             color='#1f77b4',
-            alpha=0.2,  # Transparency of the shadow
+            alpha=0.2,
             label='Std Dev'
         )
 
     # Professional Labeling & Styling
     plot.set_title(f"{title} ({num_iterations} Iterations)", fontsize=16)
     plot.set_xlabel("Iteration Index", fontsize=12)
-    plot.set_ylabel("Value", fontsize=12)
+    plot.set_ylabel("Value (SymLog Scale)" if use_log else "Value", fontsize=12)
 
-    # Maintain the 'Breathing Room' on the Y-Axis
+    # Maintain the 'Breathing Room' on the X-Axis
     plt.xlim(-num_iterations * 0.02, num_iterations * 1.02)
 
-    # Optional: Log scale if values span many orders of magnitude
-    # plt.yscale('log')
+    # 3. Apply Symmetrical Log Scale if requested
+    # symlog is required to "center" the log scale at 0 and handle negative values.
+    if use_log:
+        # linthresh determines the size of the linear region around 0.
+        # We set it to a small value relative to typical fitness ranges.
+        plt.yscale('symlog', linthresh=1e-6)
 
     plt.legend()
+    plt.tight_layout()
+    plt.show()
+
+
+def plot_grid_search(df, title: str = ""):
+    pivot_table = df.pivot_table(
+        index='c2',
+        columns='c1',
+        values='fitness',
+        aggfunc='mean'
+    )
+
+    plt.figure(figsize=(12, 9))
+    sns.set_theme(style="white")
+
+    sns.heatmap(
+        pivot_table,
+        annot=True,
+        fmt=".2f",
+        cmap="rocket_r",
+        linewidths=.5,
+        cbar_kws={'label': 'Mean Fitness'}
+    )
+
+    plt.title(f"PSO Parameter Sensitivity: {title}", fontsize=16)
+    plt.xlabel("Cognitive Coefficient ($c_1$)", fontsize=12)
+    plt.ylabel("Social Coefficient ($c_2$)", fontsize=12)
+    plt.show()
+
+
+def plot_values_line(num_iterations: int, data_points: list, title: str = "", use_log: bool = False):
+    sns.set_theme(style="whitegrid")
+    plt.figure(figsize=(12, 6))
+
+    plot = sns.lineplot(
+        x=range(num_iterations),
+        y=data_points,
+        linewidth=0.9,
+        marker=None,
+        color='#1f77b4'
+    )
+
+    plot.set_title(f"{title} ({num_iterations} Iterations)", fontsize=16)
+    plot.set_xlabel("Iteration Index", fontsize=12)
+    plot.set_ylabel("Value", fontsize=12)
+
+    plt.xlim(-num_iterations * 0.02, num_iterations * 1.02)
+
+    if use_log:
+        plt.yscale('symlog', linthresh=1e-6)
+
     plt.tight_layout()
     plt.show()
 
@@ -76,35 +198,6 @@ def plot_grid_search(df, title: str = ""):
     plt.title("PSO Parameter Sensitivity: $c_1$ vs $c_2$", fontsize=16)
     plt.xlabel("Cognitive Coefficient ($c_1$)", fontsize=12)
     plt.ylabel("Social Coefficient ($c_2$)", fontsize=12)
-    plt.show()
-
-
-def plot_values_line(num_iterations: int, data_points: list, title: str = ""):
-    sns.set_theme(style="whitegrid")
-    plt.figure(figsize=(12, 6))
-
-    plot = sns.lineplot(
-        x=range(num_iterations),
-        y=data_points,
-        linewidth=0.9,
-        marker=None,
-        color='#1f77b4'
-    )
-
-    plot.set_title(f"{title} ({num_iterations} Iterations)", fontsize=16)
-    plot.set_xlabel("Iteration Index", fontsize=12)
-    plot.set_ylabel("Fitness Value", fontsize=12)
-
-    # --- THE FIX ---
-    # Instead of xlim(0, ...), we set a margin or a slight negative start
-    # Option A: Manual offset (e.g., -50 iterations of padding)
-    plt.xlim(-num_iterations * 0.02, num_iterations * 1.02)
-
-    # Option B: Let Matplotlib handle it automatically with margins
-    # plt.margins(x=0.05)
-    # ----------------
-
-    plt.tight_layout()
     plt.show()
 
 

@@ -1,51 +1,63 @@
-# ======================================================================
-# SB3 Training Setup (Strict matching to Section 4.3 & Table 2)
-# ======================================================================
 import numpy as np
 import gymnasium as gym
-from gymnasium import spaces
+import torch
 from stable_baselines3 import SAC
 from stable_baselines3.common.env_checker import check_env
-from stable_baselines3.common.callbacks import BaseCallback
-
 from GymWrapper import ParameterLoggingCallback, SAPSOEnv
 
-if __name__ == "__main__":
-    # 1. Initialize custom Environment
-    env = SAPSOEnv(num_particles=30, dim=30, max_steps=5000, n_t=10)
+# Global Seed for Reproducibility (Section 4.2 / SwarmProf Standards)
+SEED = 42
 
-    # Optional: Verify the environment complies with Gymnasium specs
-    check_env(env, warn=True)
 
-    # 2. Define Network Architecture (Section 4.3: Actor layer size = 256, Critic layer size = 256)
-    policy_kwargs = dict(
-        net_arch=dict(pi=[256, 256], qf=[256, 256])
+def train_sapso():
+    # 1. Initialize custom Environment with randomized landscape cycling
+    env = SAPSOEnv(
+        num_particles=30,
+        dim=30,
+        max_steps=5000,
+        n_t=10,
+        seed=SEED
     )
 
-    # 3. Instantiate Soft Actor-Critic (SAC) Model
+    check_env(env, warn=True)
+
+    # 2. Network Architecture (Section 4.3)
+    policy_kwargs = dict(
+        net_arch=dict(pi=[256, 256], qf=[256, 256]),
+        activation_fn=torch.nn.ReLU
+    )
+
+    # 3. Instantiate SAC Model
+    # Note: entropy coefficient (ent_coef) 'auto' allows the agent to
+    # find the best balance of exploration (Section 2.6)
     model = SAC(
         "MlpPolicy",
         env,
-        learning_rate=0.0001,  # Table 2: Learning rate a
-        buffer_size=1_000_000,  # Table 2: Replay buffer size
-        tau=0.005,  # Table 2: Target smoothing coefficient T
-        gamma=1.0,  # Table 2: Discount factor gamma
-        batch_size=256,  # Default robust batch size
+        learning_rate=0.0001,
+        buffer_size=1_000_000,
+        tau=0.005,
+        gamma=1.0,
+        batch_size=256,
+        ent_coef='auto',
+        train_freq=1,
+        gradient_steps=1,
         policy_kwargs=policy_kwargs,
         verbose=1,
-        seed=42,
-        tensorboard_log="./sac_sapso_tensorboard/"  # <-- Turn on TensorBoard logging
+        seed=SEED,
+        tensorboard_log="./sac_sapso_tensorboard/"
     )
 
-    print("🐝 Starting SAC-SAPSO Training... Hold on to your particles!")
+    print(f"🐝 Training on 45 functions (Shuffled Seed: {SEED})...")
 
-    # 4. Train the Model (Table 2: Training steps = 2 * 10^5)
+    # 4. Total Training Steps (2 * 10^5)
     TOTAL_TIMESTEPS = 200_000
 
-    # Pass the custom callback into the learn method
     callback = ParameterLoggingCallback()
     model.learn(total_timesteps=TOTAL_TIMESTEPS, log_interval=4, callback=callback)
 
-    # 5. Save the optimal policy
     model.save("sac_sapso_policy")
     print("🎓 Training Complete. Model saved as 'sac_sapso_policy.zip'")
+
+
+if __name__ == "__main__":
+    train_sapso()

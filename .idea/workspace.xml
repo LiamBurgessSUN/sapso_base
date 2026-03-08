@@ -4,8 +4,14 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="4ba59f72-512a-4ff3-b217-2cfe2d38bd17" name="Changes" comment="RL and Gym">
-      <change beforePath="$PROJECT_DIR$/fitness_function/FitnessFunction.py" beforeDir="false" afterPath="$PROJECT_DIR$/fitness_function/FitnessFunction.py" afterDir="false" />
+    <list default="true" id="4ba59f72-512a-4ff3-b217-2cfe2d38bd17" name="Changes" comment="checkpoint">
+      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/GymWrapper.py" beforeDir="false" afterPath="$PROJECT_DIR$/GymWrapper.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/RL.py" beforeDir="false" afterPath="$PROJECT_DIR$/RL.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Swarm.py" beforeDir="false" afterPath="$PROJECT_DIR$/Swarm.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/eval.py" beforeDir="false" afterPath="$PROJECT_DIR$/eval.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/main.py" beforeDir="false" afterPath="$PROJECT_DIR$/main.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/plots.py" beforeDir="false" afterPath="$PROJECT_DIR$/plots.py" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -58,7 +64,7 @@
       <recent name="\\wsl.localhost\Ubuntu-22.04\home\liam\research\pso\papers" />
     </key>
   </component>
-  <component name="RunManager" selected="Python.eval">
+  <component name="RunManager" selected="Python.main">
     <configuration name="RL" type="PythonConfigurationType" factoryName="Python" temporary="true" nameIsGenerated="true">
       <module name="pso" />
       <option name="ENV_FILES" value="" />
@@ -165,7 +171,8 @@
       <workItem from="1772564313128" duration="3459000" />
       <workItem from="1772567945831" duration="2097000" />
       <workItem from="1772967299718" duration="11352000" />
-      <workItem from="1772988068668" duration="4871000" />
+      <workItem from="1772988068668" duration="5827000" />
+      <workItem from="1772994069899" duration="3605000" />
     </task>
     <task id="LOCAL-00001" summary="pso class">
       <option name="closed" value="true" />
@@ -239,7 +246,23 @@
       <option name="project" value="LOCAL" />
       <updated>1772992566369</updated>
     </task>
-    <option name="localTasksCounter" value="10" />
+    <task id="LOCAL-00010" summary="RL and Gym">
+      <option name="closed" value="true" />
+      <created>1772993202437</created>
+      <option name="number" value="00010" />
+      <option name="presentableId" value="LOCAL-00010" />
+      <option name="project" value="LOCAL" />
+      <updated>1772993202437</updated>
+    </task>
+    <task id="LOCAL-00011" summary="checkpoint">
+      <option name="closed" value="true" />
+      <created>1772993233937</created>
+      <option name="number" value="00011" />
+      <option name="presentableId" value="LOCAL-00011" />
+      <option name="project" value="LOCAL" />
+      <updated>1772993233937</updated>
+    </task>
+    <option name="localTasksCounter" value="12" />
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">
@@ -248,7 +271,8 @@
   <component name="VcsManagerConfiguration">
     <MESSAGE value="pso class" />
     <MESSAGE value="RL and Gym" />
-    <option name="LAST_COMMIT_MESSAGE" value="RL and Gym" />
+    <MESSAGE value="checkpoint" />
+    <option name="LAST_COMMIT_MESSAGE" value="checkpoint" />
   </component>
   <component name="XDebuggerManager">
     <watches-manager>
@@ -258,8 +282,8 @@
     </watches-manager>
   </component>
   <component name="com.intellij.coverage.CoverageDataManagerImpl">
-    <SUITE FILE_PATH="coverage/pso$main.coverage" NAME="main Coverage Results" MODIFIED="1772992168340" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="false" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="C:\Users\Liam\Documents\Research\pso" />
-    <SUITE FILE_PATH="coverage/pso$eval.coverage" NAME="eval Coverage Results" MODIFIED="1772992219380" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="false" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$" />
-    <SUITE FILE_PATH="coverage/pso$RL.coverage" NAME="RL Coverage Results" MODIFIED="1772990640080" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="false" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$" />
+    <SUITE FILE_PATH="coverage/pso$main.coverage" NAME="main Coverage Results" MODIFIED="1772999443006" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="false" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="C:\Users\Liam\Documents\Research\pso" />
+    <SUITE FILE_PATH="coverage/pso$eval.coverage" NAME="eval Coverage Results" MODIFIED="1772998932837" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="false" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$" />
+    <SUITE FILE_PATH="coverage/pso$RL.coverage" NAME="RL Coverage Results" MODIFIED="1772994254971" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="false" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$" />
   </component>
 </project>
