@@ -1,27 +1,33 @@
 import numpy as np
 from fontTools.misc.arrayTools import vectorLength
 
+from fitness_function.FitnessFunction import FitnessFunction
+
 
 ###             axis_1 ->
 ###  axis_0 || [ sample_1_x , sample_1_y...
 ###         \/   sample_2_x , sample_2_y ]
 class Swarm:
-    def __init__(self, number_particles: int, bounds: tuple, expected_iterations: int = 5000):
+    def __init__(self, number_particles: int, fitness_function: FitnessFunction, expected_iterations: int = 5000):
         self.number_particles = number_particles
+
+        self.bounds = fitness_function.bounds
+        self.ff = fitness_function
 
         self.expected_iterations = expected_iterations
 
         self.seed = 42
         np.random.seed(seed=self.seed)
 
-        self.fitness = np.random.uniform(low=80, high=100, size=number_particles)
+        self.fitness = np.full((number_particles,), np.inf)
 
         self.banned_particles = np.zeros(number_particles)
 
         self.velocity = np.random.uniform(low=0.5, high=0.8, size=(number_particles, 30))
-        self.position = np.random.uniform(low=bounds[0] + 0.5, high=bounds[1] - 0.5, size=(number_particles, 30))
-        self.local_best_position = np.random.uniform(low=8, high=10, size=(number_particles, 30))
-        self.global_best_position = np.random.uniform(low=8, high=10, size=(number_particles,))
+        self.position = np.random.uniform(low=self.bounds[0] + 0.1, high=self.bounds[1] - 0.1,
+                                          size=(number_particles, 30))
+        self.local_best_position = self.position.copy()
+        self.global_best_position = np.random.uniform(low=self.bounds[0], high=self.bounds[1], size=(number_particles,))
 
         self.inertia = np.float64(0.729844)
         self.inertia_log = []
@@ -32,7 +38,6 @@ class Swarm:
         self.global_cognitive_c2 = np.float64(1.496180)
         self.global_cognitive_c2_log = []
 
-        self.bounds = bounds
         self.converged = False
 
         self.best_log = []
@@ -58,6 +63,8 @@ class Swarm:
         self.prior_best = np.min(self.fitness_function())
         self.best_fitness = np.min(self.fitness_function())
 
+        self.delta_vector = np.random.uniform(0, 1, size=30)
+
     def _log_control(self):
         self.local_cognitive_c1_log.append(self.local_cognitive_c1)
         self.global_cognitive_c2_log.append(self.global_cognitive_c2)
@@ -67,6 +74,8 @@ class Swarm:
         self.local_cognitive_c1 = np.float64(local_cognitive)
         self.global_cognitive_c2 = np.float64(global_cognitive)
         self.inertia = np.float64(inertia)
+        print(
+            f"Parameters Changed -- C1: {self.local_cognitive_c1}, C2: {self.global_cognitive_c2}, Inertia: {self.inertia}")
 
     def sample_stagnation(self):
         self.fitness_stagnation = np.abs(self.best_fitness - self.prior_best) < 0.001
@@ -104,10 +113,22 @@ class Swarm:
         self.avg_velocity_log.append(mean_step_size)
         self.avg_velocity_std_log.append(np.std(step_sizes))
 
-    def sample_stability(self):
+    def sample_stability(self) -> bool:
+        stable = (self.local_cognitive_c1 + self.global_cognitive_c2) < (24 * (1 - self.inertia ** 2)) / (
+                7 - 5 * self.inertia)
         self.stability_log.append(
-            (self.local_cognitive_c1 + self.global_cognitive_c2) < (24 * (1 - self.inertia ** 2)) / (
-                    7 - 5 * self.inertia))
+            stable
+        )
+
+        return stable
+
+    def sample_velocities_normalized(self) -> np.array:
+        b_min, b_max = self.bounds
+
+        b_range = b_max - b_min
+        midpoint = (b_min + b_max) / 2.0
+
+        return np.tanh((2.0 / b_range) * (self.velocity - midpoint))
 
     def step(self, iteration: int = 0) -> tuple:
         # self.sample_control_parameters_with_time(iteration)
@@ -124,6 +145,10 @@ class Swarm:
 
         self.fitness_log.append(np.mean(costs))
         self.fitness_std_log.append(np.std(costs))
+
+        in_bounds = (self.position >= self.bounds[0]) & (self.position <= self.bounds[1])
+        particle_in_bounds = np.all(in_bounds, axis=1)
+        costs[~particle_in_bounds] = np.inf
 
         min_cost = np.min(costs)
         min_particle = np.argmin(costs)
@@ -148,7 +173,7 @@ class Swarm:
                          self.local_cognitive_c1 * r1 * (self.local_best_position - self.position) +
                          self.global_cognitive_c2 * r2 * (self.global_best_position - self.position))
 
-        # self.normalize_velocity()
+        self.clamp_velocities_simple_bound()
 
         self.history.append(self.position.copy())
 
@@ -158,67 +183,31 @@ class Swarm:
 
         return min_cost, self.global_best_position
 
-    def normalize_velocity(self):
-        b_min, b_max = self.bounds
+    def clamp_velocities_simple_bound(self):
+        lower, upper = self.bounds
 
-        b_range = b_max - b_min
-        midpoint = (b_min + b_max) / 2.0
+        v_max = self.delta_vector * (upper - lower)
 
-        self.velocity = np.tanh((2.0 / b_range) * (self.velocity - midpoint))
-        assert self.velocity.shape == self.position.shape
+        self.velocity = np.clip(self.velocity, -v_max, v_max)
 
-    def clamp_velocities_simple_bound(self, direction: int = 0):
-        def apply(velocities):
-            self.bounds[direction][1]: np.float64
-            self.bounds[direction][0]: np.float64
-            velocity_max: np.float64
-            velocity_max = np.random.uniform(0, 1, size=1) * (self.bounds[direction][0] - self.bounds[direction][1])
+    def clamp_velocities_dynamic_bound(self):
+        lower, upper = self.bounds
 
-            for index, velocity in enumerate(velocities):
-                if velocity_max < velocity:
-                    velocities[index] = velocity_max
-                elif velocity < -velocity_max:
-                    velocities[index] = -velocity_max
+        delta = np.random.uniform(0, 1)
 
-            return velocities
+        space_diagonal = np.sqrt(np.sum((upper - lower) ** 2))
+        v_max = delta * space_diagonal
 
-        if direction == 0:
-            self.x_velocity = apply(self.x_velocity)
-        else:
-            self.y_velocity = apply(self.y_velocity)
+        current_norms = np.linalg.norm(self.velocity, axis=1, ord=2)
 
-    def clamp_velocities_dynamic_bound(self, direction: int = 0):
-        velocity_max = np.random.uniform(0, 1) * np.linalg.norm(self.bounds)
+        mask = current_norms > v_max
 
-        def apply(velocities):
-            for index, velocity in enumerate(velocities):
-                if velocity > velocity_max:
-                    velocities[index] = (velocity_max / np.abs(velocity)) * velocity
-
-            return velocities
-
-        if direction == 0:
-            self.x_velocity = apply(self.x_velocity)
-        else:
-            self.y_velocity = apply(self.y_velocity)
+        if np.any(mask):
+            scaling_factors = v_max / current_norms[mask]
+            self.velocity[mask] *= scaling_factors[:, np.newaxis]
 
     def compute_average_velocity(self) -> np.float64:
-        return (1 / (self.number_particles * self.bounds.ndim)) * (
-                np.sum(self.x_velocity) + np.sum(self.y_velocity.sum()))
+        pass
 
     def fitness_function(self):
-        n_particles, n_dims = self.position.shape
-
-        # 1. Create the coefficient vector for the dimensions
-        # Shape: (D,) -> Values grow exponentially from 10^0 to 10^6
-        coefficients = (10 ** 6) ** (np.arange(n_dims) / (n_dims - 1))
-
-        # 2. Square the positions (Element-wise)
-        # Shape: (N, D)
-        squared_pos = self.position ** 2
-
-        # 3. Multiply and Sum across dimensions (Axis 1)
-        # Broadcasting (N, D) * (D,) works perfectly here
-        fitness = np.sum(coefficients * squared_pos, axis=1)
-
-        return fitness
+        return self.ff.fitness_function(self.position)

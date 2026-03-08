@@ -8,11 +8,11 @@ from stable_baselines3 import SAC
 from stable_baselines3.common.env_checker import check_env
 from stable_baselines3.common.callbacks import BaseCallback
 
-from GymWrapper import SAPSOEnv
+from GymWrapper import ParameterLoggingCallback, SAPSOEnv
 
 if __name__ == "__main__":
     # 1. Initialize custom Environment
-    env = SAPSOEnv(num_particles=30, dim=30, max_steps=5000, bounds=(-100.0, 100.0), n_t=10)
+    env = SAPSOEnv(num_particles=30, dim=30, max_steps=5000, n_t=10)
 
     # Optional: Verify the environment complies with Gymnasium specs
     check_env(env, warn=True)
@@ -33,14 +33,18 @@ if __name__ == "__main__":
         batch_size=256,  # Default robust batch size
         policy_kwargs=policy_kwargs,
         verbose=1,
-        seed=42
+        seed=42,
+        tensorboard_log="./sac_sapso_tensorboard/"  # <-- Turn on TensorBoard logging
     )
 
     print("🐝 Starting SAC-SAPSO Training... Hold on to your particles!")
 
     # 4. Train the Model (Table 2: Training steps = 2 * 10^5)
     TOTAL_TIMESTEPS = 200_000
-    model.learn(total_timesteps=TOTAL_TIMESTEPS, log_interval=4)
+
+    # Pass the custom callback into the learn method
+    callback = ParameterLoggingCallback()
+    model.learn(total_timesteps=TOTAL_TIMESTEPS, log_interval=4, callback=callback)
 
     # 5. Save the optimal policy
     model.save("sac_sapso_policy")

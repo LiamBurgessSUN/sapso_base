@@ -2,14 +2,14 @@ import itertools
 import numpy as np
 import pandas as pd
 
+from fitness_function.FitnessFunction import EllipticFunction
+
 from plots import plot_values_line_with_std
 from Swarm import Swarm
 
 df = pd.DataFrame(columns=['c1', 'c2', 'w', 'fitness'])
 
-# w_range = np.linspace(0.4, 1.1, 20)
-# c1_range = np.linspace(0.8, 2.5, 20)
-# c2_range = np.linspace(0.8, 2.5, 20)
+ff = EllipticFunction()
 
 w_range = np.array((np.float64(0.729844),), dtype=np.float64)
 c1_range = np.array((np.float64(1.496180),), dtype=np.float64)
@@ -22,7 +22,7 @@ for sample in grid_space:
     stop_count = 0
     swarm = Swarm(
         number_particles=30,
-        bounds=(-100, 100),
+        fitness_function=ff,
     )
     swarm.set_control_parameters(sample[0], sample[1], sample[2])
     vals = ()
