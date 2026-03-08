@@ -111,6 +111,24 @@ class Swarm:
         v_normed = (2.0 / b_range) * v_magnitudes
         return np.tanh(v_normed)
 
+    def sample_control_parameters_randomly(self):
+        """Baseline Mode: Randomly samples parameters adhering to Poli's stability (Eq. 4)."""
+        while True:
+            w = np.random.uniform(-1, 1)
+            c1 = np.random.uniform(0, 4)
+            c2 = np.random.uniform(0, 4)
+            denom = (7 - 5 * w)
+            if denom > 0 and (c1 + c2) < (24 * (1 - w ** 2)) / denom:
+                self.set_control_parameters(c1, c2, w)
+                break
+
+    def sample_control_parameters_with_time(self, time: int):
+        """Baseline Mode: Time-variant adaptation following Equation 3."""
+        t_max = self.expected_iterations
+        self.inertia = 0.4 * (((time - t_max) / t_max) ** 2) + 0.4
+        self.local_cognitive_c1 = -3 * (time / t_max) + 3.5
+        self.global_cognitive_c2 = 3 * (time / t_max) + 0.5
+
     def step(self, iteration: int = 0) -> tuple:
         self.sample_diversity()
         in_bound_particles = self.sample_boundedness()

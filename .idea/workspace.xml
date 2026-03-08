@@ -6,11 +6,10 @@
   <component name="ChangeListManager">
     <list default="true" id="4ba59f72-512a-4ff3-b217-2cfe2d38bd17" name="Changes" comment="RL and Gym">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/GymWrapper.py" beforeDir="false" afterPath="$PROJECT_DIR$/GymWrapper.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/Swarm.py" beforeDir="false" afterPath="$PROJECT_DIR$/Swarm.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/eval.py" beforeDir="false" afterPath="$PROJECT_DIR$/eval.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/fitness_function/FitnessFunction.py" beforeDir="false" afterPath="$PROJECT_DIR$/fitness_function/FitnessFunction.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/main.py" beforeDir="false" afterPath="$PROJECT_DIR$/main.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/pyproject.toml" beforeDir="false" afterPath="$PROJECT_DIR$/pyproject.toml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/uv.lock" beforeDir="false" afterPath="$PROJECT_DIR$/uv.lock" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -63,7 +62,7 @@
       <recent name="\\wsl.localhost\Ubuntu-22.04\home\liam\research\pso\papers" />
     </key>
   </component>
-  <component name="RunManager" selected="Python.RL">
+  <component name="RunManager" selected="Python.eval">
     <configuration name="RL" type="PythonConfigurationType" factoryName="Python" temporary="true" nameIsGenerated="true">
       <module name="pso" />
       <option name="ENV_FILES" value="" />
@@ -141,8 +140,8 @@
     </list>
     <recent_temporary>
       <list>
-        <item itemvalue="Python.RL" />
         <item itemvalue="Python.eval" />
+        <item itemvalue="Python.RL" />
       </list>
     </recent_temporary>
   </component>
@@ -170,7 +169,7 @@
       <workItem from="1772564313128" duration="3459000" />
       <workItem from="1772567945831" duration="2097000" />
       <workItem from="1772967299718" duration="11352000" />
-      <workItem from="1772988068668" duration="2312000" />
+      <workItem from="1772988068668" duration="4419000" />
     </task>
     <task id="LOCAL-00001" summary="pso class">
       <option name="closed" value="true" />
@@ -228,7 +227,15 @@
       <option name="project" value="LOCAL" />
       <updated>1772988472346</updated>
     </task>
-    <option name="localTasksCounter" value="8" />
+    <task id="LOCAL-00008" summary="RL and Gym">
+      <option name="closed" value="true" />
+      <created>1772990554265</created>
+      <option name="number" value="00008" />
+      <option name="presentableId" value="LOCAL-00008" />
+      <option name="project" value="LOCAL" />
+      <updated>1772990554265</updated>
+    </task>
+    <option name="localTasksCounter" value="9" />
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">
@@ -247,8 +254,8 @@
     </watches-manager>
   </component>
   <component name="com.intellij.coverage.CoverageDataManagerImpl">
-    <SUITE FILE_PATH="coverage/pso$main.coverage" NAME="main Coverage Results" MODIFIED="1772989388786" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="false" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="C:\Users\Liam\Documents\Research\pso" />
-    <SUITE FILE_PATH="coverage/pso$eval.coverage" NAME="eval Coverage Results" MODIFIED="1772989195127" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="false" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$" />
-    <SUITE FILE_PATH="coverage/pso$RL.coverage" NAME="RL Coverage Results" MODIFIED="1772989443146" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="false" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$" />
+    <SUITE FILE_PATH="coverage/pso$main.coverage" NAME="main Coverage Results" MODIFIED="1772992168340" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="false" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="C:\Users\Liam\Documents\Research\pso" />
+    <SUITE FILE_PATH="coverage/pso$eval.coverage" NAME="eval Coverage Results" MODIFIED="1772992219380" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="false" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$" />
+    <SUITE FILE_PATH="coverage/pso$RL.coverage" NAME="RL Coverage Results" MODIFIED="1772990640080" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="false" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$" />
   </component>
 </project>
