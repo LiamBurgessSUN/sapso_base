@@ -124,11 +124,12 @@ class Swarm:
 
     def sample_velocities_normalized(self) -> np.array:
         b_min, b_max = self.bounds
-
         b_range = b_max - b_min
-        midpoint = (b_min + b_max) / 2.0
 
-        return np.tanh((2.0 / b_range) * (self.velocity - midpoint))
+        v_magnitudes = np.linalg.norm(self.velocity, axis=1)
+
+        v_normed = (2.0 / b_range) * v_magnitudes
+        return np.tanh(v_normed)
 
     def step(self, iteration: int = 0) -> tuple:
         # self.sample_control_parameters_with_time(iteration)
