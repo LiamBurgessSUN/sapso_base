@@ -11,25 +11,30 @@ from fitness_function.FitnessFunction import EllipticFunction
 class ParameterLoggingCallback(BaseCallback):
     """
     Custom callback for logging the SAC agent's chosen Control Parameters
-    (w, c1, c2) and the swarm's fitness to TensorBoard over time.
+    (w, c1, c2) and the swarm's metrics (fitness, diversity, velocity, stability) to TensorBoard.
     """
 
     def __init__(self, verbose=0):
         super(ParameterLoggingCallback, self).__init__(verbose)
 
     def _on_step(self) -> bool:
-        # SB3 handles vectorized environments; we access the first one's info
+        # Access the first environment's info dict (SB3 uses vectorized envs by default)
         info = self.locals["infos"][0]
 
-        # Log params to a 'swarm_params' TensorBoard folder
-        # Syncing these keys with the info dict in SAPSOEnv.step
+        # Log Control Parameters (SAC Actions)
         self.logger.record("swarm_params/inertia_w", info.get("current_w", 0.0))
         self.logger.record("swarm_params/cognitive_c1", info.get("current_c1", 0.0))
         self.logger.record("swarm_params/social_c2", info.get("current_c2", 0.0))
 
-        # Log metrics to a 'swarm_metrics' TensorBoard folder
+        # Log Swarm Performance Metrics
         self.logger.record("swarm_metrics/global_best_fitness", info.get("global_best_fitness", 0.0))
         self.logger.record("swarm_metrics/diversity", info.get("swarm_diversity", 0.0))
+
+        # Log Average Velocity to TensorBoard
+        self.logger.record("swarm_metrics/average_velocity", info.get("avg_velocity", 0.0))
+
+        # New: Log Swarm Stability (Poli's Condition)
+        self.logger.record("swarm_metrics/stability", info.get("is_stable", 0.0))
 
         return True
 
@@ -37,8 +42,6 @@ class ParameterLoggingCallback(BaseCallback):
 class SAPSOEnv(gym.Env):
     """
     Gymnasium Environment Wrapper for SAC-SAPSO.
-    Incorporates the n_t (action frequency) and velocity clamping
-    as described in Sections 3.3.2 and 5.3 of the paper.
     """
 
     def __init__(self, num_particles=30, dim=30, max_steps=5000, n_t=10):
@@ -49,10 +52,10 @@ class SAPSOEnv(gym.Env):
         self.n_t = n_t
         self.ff = EllipticFunction()
 
-        # Action space: [w, c1, c2] normalized to [-1, 1]
+        # Action: [w, c1, c2] in range [-1, 1]
         self.action_space = spaces.Box(low=-1.0, high=1.0, shape=(3,), dtype=np.float32)
 
-        # Observation space: v_norm (n_s) + [stability, infeasibility, completion]
+        # Observation: squashed velocities + global metrics
         self.observation_space = spaces.Box(low=-1.0, high=1.0, shape=(num_particles + 3,), dtype=np.float32)
 
         self.swarm = None
@@ -68,65 +71,58 @@ class SAPSOEnv(gym.Env):
         v_norm = self.swarm.sample_velocities_normalized()
 
         # Metric 1: Stability (Poli's Condition)
-        # Convert bool to float for NN compatibility
         stability = 1.0 if self.swarm.sample_stability() else -1.0
 
         # Metric 2: Percentage of Infeasible Particles
         infeasibility = 0.0
         if self.swarm.percentage_bound_log:
-            # Map [0, 1] percentage to [-1, 1] range
             infeasibility = (1.0 - self.swarm.percentage_bound_log[-1]) * 2.0 - 1.0
 
-        # Metric 3: Percentage of Search Completion
+        # Metric 3: Search Completion
         completion = (self.current_step / self.t_max) * 2.0 - 1.0
 
         obs = np.concatenate([v_norm, [stability, infeasibility, completion]])
         return np.nan_to_num(obs.astype(np.float32))
 
     def step(self, action):
-        # Map SAC [-1, 1] output to PSO physics ranges
-        w_scaled = action[0]  # Inertia: [-1, 1]
-        c1_scaled = (action[1] + 1.0) * 2.0  # Cognitive: [0, 4]
-        c2_scaled = (action[2] + 1.0) * 2.0  # Social: [0, 4]
+        # Map SAC actions to PSO ranges
+        w_scaled = action[0]
+        c1_scaled = (action[1] + 1.0) * 2.0
+        c2_scaled = (action[2] + 1.0) * 2.0
 
         self.swarm.set_control_parameters(c1_scaled, c2_scaled, w_scaled)
-
         y_old = self.swarm.best_fitness
 
-        # Advance swarm by n_t steps (action frequency as per Sect 3.3.2)
+        # Simulation Loop (n_t frequency)
         for _ in range(self.n_t):
             if self.current_step < self.t_max:
                 self.swarm.step(self.current_step)
                 self.current_step += 1
 
         y_new = self.swarm.best_fitness
-
         obs = self._get_observation()
         reward = self._calculate_reward(y_old, y_new)
 
         terminated = False
         truncated = self.current_step >= self.t_max
 
-        # FIXED: Info keys now match ParameterLoggingCallback expectations
+        # info dictionary passed to Callback
         info = {
             "global_best_fitness": self.swarm.best_fitness,
             "current_w": w_scaled,
             "current_c1": c1_scaled,
             "current_c2": c2_scaled,
-            "swarm_diversity": self.swarm.diversity_log[-1] if self.swarm.diversity_log else 0.0
+            "swarm_diversity": self.swarm.diversity_log[-1] if self.swarm.diversity_log else 0.0,
+            "avg_velocity": self.swarm.avg_velocity_log[-1] if self.swarm.avg_velocity_log else 0.0,
+            "is_stable": 1.0 if self.swarm.sample_stability() else 0.0
         }
 
         return obs, float(reward), terminated, truncated, info
 
     def _calculate_reward(self, y_old, y_new):
-        """ Relative global best improvement (Eq. 25) """
         if np.isinf(y_old) or np.isinf(y_new) or y_old == y_new:
             return 0.0
-
-        # Bonus for crossing the zero-threshold (rare)
-        if y_old > 0 > y_new:
-            return 1.0
-
+        if y_old > 0 > y_new: return 1.0
         beta = abs(y_old) + abs(y_new)
         if y_new > 0 and y_old > 0:
             return 2.0 * ((y_old + beta) - (y_new + beta)) / (y_old + beta)

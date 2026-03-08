@@ -74,8 +74,8 @@ class Swarm:
         self.local_cognitive_c1 = np.float64(local_cognitive)
         self.global_cognitive_c2 = np.float64(global_cognitive)
         self.inertia = np.float64(inertia)
-        print(
-            f"Parameters Changed -- C1: {self.local_cognitive_c1}, C2: {self.global_cognitive_c2}, Inertia: {self.inertia}")
+        # print(
+        #     f"Parameters Changed -- C1: {self.local_cognitive_c1}, C2: {self.global_cognitive_c2}, Inertia: {self.inertia}")
 
     def sample_stagnation(self):
         self.fitness_stagnation = np.abs(self.best_fitness - self.prior_best) < 0.001
