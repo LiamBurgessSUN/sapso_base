@@ -102,6 +102,15 @@ def plot_swarm(swarm: Swarm, func_name: str):
         use_log=False
     )
 
+    plot_values_line_with_std(
+        num_iterations=len(swarm.stability_log),
+        data_points=swarm.stability_log,
+        title=f"SAC-SAPSO: {func_name} Stability Condition",
+        use_log=False
+    )
+
+
+
 
 def plot_values_line_with_std(num_iterations: int, data_points: list, std_dev: list = None, title: str = "",
                               use_log: bool = False):
