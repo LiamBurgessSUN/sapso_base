@@ -18,7 +18,7 @@ from plots import plot_swarm
 # 'constant'      -> Fixed w, c1, c2 (Clerc & Kennedy standard)
 # 'time-variant'  -> Parameters evolve over time (Eq. 3)
 # 'random'        -> Random sampling adhering to Poli's condition
-MODE = 'constant'
+MODE = 'time-variant'
 
 # 2. Search Parameters
 MAX_ITERATIONS = 5000
@@ -76,6 +76,7 @@ def benchmark_baselines():
 
     results = []
 
+    fitness_log = []
     for func_class in EVALUATION_SET:
         func_name = func_class().__class__.__name__
         print(f"Testing: {func_name}...", end=" ", flush=True)
@@ -93,12 +94,17 @@ def benchmark_baselines():
         # Optional: Generate plots for each test function
         plot_swarm(swarm, func_name)
 
+        fitness_log.append(swarm.best_fitness)
+
     # Display Summary Table (Mirroring RL rl_eval.py output)
     df = pd.DataFrame(results)
     print(f"\n📊 BASELINE SUMMARY TABLE ({MODE.upper()})")
     print("=" * 60)
     print(df.to_string(index=False))
     print("=" * 60)
+
+    print(f"Mean Fitness: {np.mean(fitness_log):.4e}")
+    print(f"Std Fitness: {np.std(fitness_log):.4e}")
 
 
 if __name__ == "__main__":

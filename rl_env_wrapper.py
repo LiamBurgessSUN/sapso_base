@@ -3,9 +3,9 @@ import gymnasium as gym
 from gymnasium import spaces
 from stable_baselines3.common.callbacks import BaseCallback
 import random
+import pandas as pd
 
 from Swarm import Swarm
-# Standardizing import path based on the project structure
 from fitness_function.FitnessFunction import TRAINING_SET, EVALUATION_SET
 
 
@@ -32,11 +32,10 @@ class ParameterLoggingCallback(BaseCallback):
 class SAPSOEnv(gym.Env):
     """
     Gymnasium Environment for SAC-SAPSO.
-    Implements randomized landscape switching for robust training and
-    specific function support for evaluation.
+    Implements randomized landscape switching for robust training.
     """
 
-    def __init__(self, num_particles=30, dim=30, max_steps=5000, n_t=10,
+    def __init__(self, num_particles=30, dim=30, max_steps=5000, n_t=125,
                  stagnation_patience=50, seed=42, fitness_function_class=None):
         super(SAPSOEnv, self).__init__()
         self.n_s = num_particles
@@ -46,19 +45,25 @@ class SAPSOEnv(gym.Env):
         self.stagnation_patience = stagnation_patience
         self.eval_mode_func = fitness_function_class
 
-        # 1. Setup deterministic shuffling for reproducibility
         self.rng = random.Random(seed)
         self.training_queue = list(TRAINING_SET)
         self.rng.shuffle(self.training_queue)
         self.current_func_idx = 0
 
-        # Action: [w, c1, c2] in range [-1, 1].
         self.action_space = spaces.Box(low=-1.0, high=1.0, shape=(3,), dtype=np.float32)
-        # Observation: squashed velocities (n_s) + [stability, infeasibility, completion]
         self.observation_space = spaces.Box(low=-1.0, high=1.0, shape=(num_particles + 3,), dtype=np.float32)
 
         self.swarm = None
         self.current_step = 0
+
+        # We store records in a list for O(1) append performance.
+        # Constant DataFrame reallocation with .loc is O(N^2) and extremely slow.
+        self._results_data = []
+
+    @property
+    def df(self) -> pd.DataFrame:
+        """Returns the collected data as a Pandas DataFrame."""
+        return pd.DataFrame(self._results_data)
 
     def reset(self, seed=None, options=None):
         if seed is not None:
@@ -66,7 +71,6 @@ class SAPSOEnv(gym.Env):
             self.rng = random.Random(seed)
             self.rng.shuffle(self.training_queue)
 
-        # 2. Select function: Evaluation mode uses a specific class, Training mode cycles
         if self.eval_mode_func is not None:
             func_class = self.eval_mode_func
         else:
@@ -74,7 +78,6 @@ class SAPSOEnv(gym.Env):
             self.current_func_idx = (self.current_func_idx + 1) % len(self.training_queue)
 
         self.ff = func_class()
-
         self.swarm = Swarm(
             number_particles=self.n_s,
             fitness_function=self.ff,
@@ -87,17 +90,14 @@ class SAPSOEnv(gym.Env):
     def _get_observation(self):
         v_norm = self.swarm.sample_velocities_normalized()
         stability = 1.0 if self.swarm.sample_stability() else -1.0
-
         infeasibility = 0.0
         if self.swarm.percentage_bound_log:
             infeasibility = (1.0 - self.swarm.percentage_bound_log[-1]) * 2.0 - 1.0
-
         completion = (self.current_step / self.t_max) * 2.0 - 1.0
         obs = np.concatenate([v_norm, [stability, infeasibility, completion]])
         return np.nan_to_num(obs.astype(np.float32))
 
     def step(self, action):
-        # SAC actions [-1, 1] mapped to [0, 4] for c1, c2 and [-1, 1] for w
         w_scaled = action[0]
         c1_scaled = (action[1] + 1.0) * 2.0
         c2_scaled = (action[2] + 1.0) * 2.0
@@ -109,12 +109,28 @@ class SAPSOEnv(gym.Env):
             if self.current_step < self.t_max:
                 self.swarm.step(self.current_step)
                 self.current_step += 1
+
+                # Capture per-swarm-step metrics
+                self._results_data.append({
+                    "nt": self.n_t,
+                    "step_number": self.current_step,
+                    "function_name": self.ff.__class__.__name__,
+                    "inertia": self.swarm.inertia,
+                    "c1": self.swarm.local_cognitive_c1,
+                    "c2": self.swarm.global_cognitive_c2,
+                    "stable": self.swarm.sample_stability(),
+                    "particles_in_bounds": self.swarm.sample_boundedness(),
+                    "avg_velocity": self.swarm.avg_velocity_log[-1],
+                    "swarm_diversity": self.swarm.diversity_log[-1],
+                    "best_fitness": self.swarm.best_fitness,
+                })
+
                 if self.swarm.is_stagnated():
                     break
 
         y_new = self.swarm.best_fitness
         obs = self._get_observation()
-        reward = self._calculate_reward(y_old, y_new)
+        reward = self._calculate_reward(y_old, y_new, self.swarm.sample_stability())
 
         terminated = self.swarm.is_stagnated()
         truncated = self.current_step >= self.t_max
@@ -132,15 +148,15 @@ class SAPSOEnv(gym.Env):
 
         return obs, float(reward), terminated, truncated, info
 
-    def _calculate_reward(self, y_old, y_new):
-        """Piecewise relative reward logic (Eq. 25)"""
+    def _calculate_reward(self, y_old, y_new, stable):
+        scale = 1.0 if stable else 0.5
         if np.isinf(y_old) or np.isinf(y_new) or y_old == y_new:
             return 0.0
         if y_old > 0 > y_new:
-            return 1.0
+            return 1.0 * scale
         beta = abs(y_old) + abs(y_new)
         if y_new > 0 and y_old > 0:
-            return 2.0 * ((y_old + beta) - (y_new + beta)) / (y_old + beta)
+            return scale * 2.0 * ((y_old + beta) - (y_new + beta)) / (y_old + beta)
         elif y_new < 0 and y_old < 0:
-            return 2.0 * ((y_old + 2 * beta) - (y_new + 2 * beta)) / (y_old + 2 * beta)
+            return scale * 2.0 * ((y_old + 2 * beta) - (y_new + 2 * beta)) / (y_old + 2 * beta)
         return 0.0

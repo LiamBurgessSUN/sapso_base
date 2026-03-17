@@ -3,19 +3,20 @@ import gymnasium as gym
 import torch
 from stable_baselines3 import SAC
 from stable_baselines3.common.env_checker import check_env
-from GymWrapper import ParameterLoggingCallback, SAPSOEnv
+from rl_env_wrapper import ParameterLoggingCallback, SAPSOEnv
 
 # Global Seed for Reproducibility (Section 4.2 / SwarmProf Standards)
 SEED = 42
 
 
 def train_sapso():
+    n_t = 125
     # 1. Initialize custom Environment with randomized landscape cycling
     env = SAPSOEnv(
         num_particles=30,
         dim=30,
         max_steps=5000,
-        n_t=10,
+        n_t=n_t,
         seed=SEED
     )
 
@@ -55,8 +56,10 @@ def train_sapso():
     callback = ParameterLoggingCallback()
     model.learn(total_timesteps=TOTAL_TIMESTEPS, log_interval=4, callback=callback)
 
-    model.save("sac_sapso_policy")
-    print("🎓 Training Complete. Model saved as 'sac_sapso_policy.zip'")
+    model.save(f"policies/sac_sapso_policy_nt_{n_t}")
+    print(f"🎓 Training Complete. Model saved as 'sac_sapso_policy_nt_{n_t}.zip'")
+
+    env.df.to_json(f"./train_results/sac_sapso_env_nt_{n_t}.json")
 
 
 if __name__ == "__main__":

@@ -75,7 +75,7 @@ def plot_swarm(swarm: Swarm, func_name: str):
         data_points=swarm.fitness_log,
         std_dev=swarm.fitness_std_log,
         title=f"SAC-SAPSO: {func_name} Fitness",
-        use_log=True
+        use_log=False
     )
 
     plot_values_line_with_std(
