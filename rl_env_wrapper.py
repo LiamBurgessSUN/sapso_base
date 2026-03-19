@@ -149,7 +149,8 @@ class SAPSOEnv(gym.Env):
         return obs, float(reward), terminated, truncated, info
 
     def _calculate_reward(self, y_old, y_new, stable):
-        scale = 1.0 if stable else 0.5
+        scale = 1.0
+        # scale = 1.0 if stable else 0.5
         if np.isinf(y_old) or np.isinf(y_new) or y_old == y_new:
             return 0.0
         if y_old > 0 > y_new:

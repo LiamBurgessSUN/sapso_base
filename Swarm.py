@@ -48,7 +48,7 @@ class Swarm:
         self.stability_log = []
         self.history = []
 
-        self.delta_vector = np.random.uniform(0, 1, size=30)
+        self.delta_vector = np.random.uniform(0, 1)
 
     def is_stagnated(self) -> bool:
         return self.patience_counter >= self.stagnation_patience
