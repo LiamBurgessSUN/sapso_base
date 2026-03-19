@@ -20,8 +20,8 @@ class Swarm:
         np.random.seed(seed=self.seed)
 
         self.fitness = np.full((number_particles,), np.inf)
-        self.velocity = np.random.uniform(low=0.5, high=0.8, size=(number_particles, 30))
-        self.position = np.random.uniform(low=self.bounds[0] + 0.1, high=self.bounds[1] - 0.1,
+        self.velocity = np.random.uniform(low=0.25, high=0.4, size=(number_particles, 30))
+        self.position = np.random.uniform(low=self.bounds[0] + 0.2, high=self.bounds[1] - 0.2,
                                           size=(number_particles, 30))
         self.local_best_position = self.position.copy()
 
@@ -48,7 +48,8 @@ class Swarm:
         self.stability_log = []
         self.history = []
 
-        self.delta_vector = np.random.uniform(0, 1)
+        # self.delta_vector = np.random.uniform(0, 1)
+        self.delta_vector = np.random.uniform(0.1, 0.5, size=30)
 
     def is_stagnated(self) -> bool:
         return self.patience_counter >= self.stagnation_patience
