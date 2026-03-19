@@ -115,6 +115,7 @@ class Swarm:
         costs[~particle_in_bounds] = np.inf
 
         self.fitness_log.append(np.mean(costs[particle_in_bounds]) if any(particle_in_bounds) else np.inf)
+        self.fitness_std_log.append(np.std(costs[particle_in_bounds]) if any(particle_in_bounds) else np.inf)
 
         min_cost = np.min(costs)
         if min_cost < self.best_fitness:

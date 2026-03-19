@@ -97,7 +97,6 @@ def plot_swarm(swarm: Swarm, func_name: str):
     plot_values_line_with_std(
         num_iterations=len(swarm.percentage_bound_log),
         data_points=swarm.percentage_bound_log,
-        std_dev=swarm.percentage_bound_std_log,
         title=f"SAC-SAPSO: {func_name} Feasible",
         use_log=False
     )

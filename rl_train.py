@@ -56,10 +56,10 @@ def train_sapso():
     callback = ParameterLoggingCallback()
     model.learn(total_timesteps=TOTAL_TIMESTEPS, log_interval=4, callback=callback)
 
-    model.save(f"policies/sac_sapso_policy_nt_{n_t}")
-    print(f"🎓 Training Complete. Model saved as 'sac_sapso_policy_nt_{n_t}.zip'")
+    model.save(f"policies/sac_sapso_policy_nt_auto")
+    print(f"🎓 Training Complete. Model saved as 'sac_sapso_policy_nt_auto.zip'")
 
-    env.df.to_json(f"./train_results/sac_sapso_env_nt_{n_t}.json")
+    env.df.to_json(f"./train_results/sac_sapso_env_nt_auto.json")
 
 
 if __name__ == "__main__":

@@ -6,7 +6,7 @@ from fitness_function.FitnessFunction import EVALUATION_SET
 from plots import plot_swarm
 
 
-def run_single_evaluation(model, func_class, num_particles=30, dim=30, patience=200):
+def run_single_evaluation(model, func_class, num_particles=30, dim=30, patience=200, auto=False):
     """
     Simulates a single function run and returns the internal swarm metrics.
     """
@@ -16,7 +16,8 @@ def run_single_evaluation(model, func_class, num_particles=30, dim=30, patience=
         max_steps=5000,
         n_t=125,
         stagnation_patience=patience,
-        fitness_function_class=func_class
+        fitness_function_class=func_class,
+        auto=auto
     )
 
     obs, _ = env.reset()
@@ -31,11 +32,17 @@ def run_single_evaluation(model, func_class, num_particles=30, dim=30, patience=
     return env.swarm, env.current_step
 
 
-def evaluate_sac_sapso(model_path="sac_sapso_policy.zip", num_particles=30, dim=30, nt=125):
+def evaluate_sac_sapso(model_path="policies/sac_sapso_policy_nt_<type>.zip", num_particles=30, dim=30, nt=125,
+                       auto=False):
     """
     Benchmarks the trained SAC policy across the entire Evaluation Set (7 functions).
     Generates a summary table and convergence plots for each.
     """
+    if auto:
+        ntype = "auto"
+    else:
+        ntype = str(nt)
+    model_path = model_path.replace("<type>", ntype)
     print(f"📂 Loading policy from {model_path}...")
     try:
         model = SAC.load(model_path)
@@ -54,7 +61,7 @@ def evaluate_sac_sapso(model_path="sac_sapso_policy.zip", num_particles=30, dim=
         func_name = func_class().__class__.__name__
         print(f"Testing: {func_name}...", end=" ", flush=True)
 
-        swarm, steps = run_single_evaluation(model, func_class, num_particles, dim, nt)
+        swarm, steps = run_single_evaluation(model, func_class, num_particles, dim, nt, auto)
 
         results.append({
             "Function": func_name,
@@ -81,4 +88,4 @@ def evaluate_sac_sapso(model_path="sac_sapso_policy.zip", num_particles=30, dim=
 
 if __name__ == "__main__":
     n_t = 125
-    evaluate_sac_sapso(model_path=f"policies/sac_sapso_policy_nt_{n_t}.zip", nt=n_t)
+    evaluate_sac_sapso(nt=n_t, auto=False)

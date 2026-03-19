@@ -36,7 +36,7 @@ class SAPSOEnv(gym.Env):
     """
 
     def __init__(self, num_particles=30, dim=30, max_steps=5000, n_t=125,
-                 stagnation_patience=50, seed=42, fitness_function_class=None):
+                 stagnation_patience=50, seed=42, fitness_function_class=None, auto: bool = False):
         super(SAPSOEnv, self).__init__()
         self.n_s = num_particles
         self.dim = dim
@@ -50,7 +50,13 @@ class SAPSOEnv(gym.Env):
         self.rng.shuffle(self.training_queue)
         self.current_func_idx = 0
 
-        self.action_space = spaces.Box(low=-1.0, high=1.0, shape=(3,), dtype=np.float32)
+        self.auto = auto
+
+        if auto:
+            self.action_space = spaces.Box(low=-1.0, high=1.0, shape=(4,), dtype=np.float32)
+        else:
+            self.action_space = spaces.Box(low=-1.0, high=1.0, shape=(3,), dtype=np.float32)
+
         self.observation_space = spaces.Box(low=-1.0, high=1.0, shape=(num_particles + 3,), dtype=np.float32)
 
         self.swarm = None
@@ -101,6 +107,9 @@ class SAPSOEnv(gym.Env):
         w_scaled = action[0]
         c1_scaled = (action[1] + 1.0) * 2.0
         c2_scaled = (action[2] + 1.0) * 2.0
+        if self.auto:
+            self.n_t = int(25 + ((action[3] + 1.0) * (125 - 25)) / 2)
+            print(f"Chosen n_t={self.n_t}")
 
         self.swarm.set_control_parameters(c1_scaled, c2_scaled, w_scaled)
         y_old = self.swarm.best_fitness
@@ -126,6 +135,7 @@ class SAPSOEnv(gym.Env):
                 })
 
                 if self.swarm.is_stagnated():
+                    print("Stagnated... stopping early")
                     break
 
         y_new = self.swarm.best_fitness
