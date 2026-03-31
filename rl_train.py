@@ -6,18 +6,20 @@ from stable_baselines3.common.env_checker import check_env
 from rl_env_wrapper import ParameterLoggingCallback, SAPSOEnv
 
 # Global Seed for Reproducibility (Section 4.2 / SwarmProf Standards)
-SEED = 42
+SEED = 17
 
 
 def train_sapso():
     n_t = 125
+    auto = False
     # 1. Initialize custom Environment with randomized landscape cycling
     env = SAPSOEnv(
         num_particles=30,
         dim=30,
         max_steps=5000,
         n_t=n_t,
-        seed=SEED
+        seed=SEED,
+        auto=auto,
     )
 
     check_env(env, warn=True)
@@ -56,10 +58,17 @@ def train_sapso():
     callback = ParameterLoggingCallback()
     model.learn(total_timesteps=TOTAL_TIMESTEPS, log_interval=4, callback=callback)
 
-    model.save(f"policies/sac_sapso_policy_nt_auto")
-    print(f"🎓 Training Complete. Model saved as 'sac_sapso_policy_nt_auto.zip'")
+    if auto:
+        ntype = "auto"
+    else:
+        ntype = str(n_t)
 
-    env.df.to_json(f"./train_results/sac_sapso_env_nt_auto.json")
+    path = f"sac_sapso_policy_nt_{ntype}"
+
+    model.save("policies/"+path)
+    print(f"🎓 Training Complete. Model saved as policies/{path}")
+
+    env.df.to_json(f"./train_results/{path}.json")
 
 
 if __name__ == "__main__":

@@ -36,7 +36,7 @@ class SAPSOEnv(gym.Env):
     """
 
     def __init__(self, num_particles=30, dim=30, max_steps=5000, n_t=125,
-                 stagnation_patience=50, seed=42, fitness_function_class=None, auto: bool = False):
+                 stagnation_patience=100, seed=42, fitness_function_class=None, auto: bool = False):
         super(SAPSOEnv, self).__init__()
         self.n_s = num_particles
         self.dim = dim
@@ -53,8 +53,10 @@ class SAPSOEnv(gym.Env):
         self.auto = auto
 
         if auto:
+            print("Using auto-tuning")
             self.action_space = spaces.Box(low=-1.0, high=1.0, shape=(4,), dtype=np.float32)
         else:
+            print(f"Using nt = {self.n_t}")
             self.action_space = spaces.Box(low=-1.0, high=1.0, shape=(3,), dtype=np.float32)
 
         self.observation_space = spaces.Box(low=-1.0, high=1.0, shape=(num_particles + 3,), dtype=np.float32)
@@ -64,12 +66,12 @@ class SAPSOEnv(gym.Env):
 
         # We store records in a list for O(1) append performance.
         # Constant DataFrame reallocation with .loc is O(N^2) and extremely slow.
-        self._results_data = []
+        self.results_data = []
 
     @property
     def df(self) -> pd.DataFrame:
         """Returns the collected data as a Pandas DataFrame."""
-        return pd.DataFrame(self._results_data)
+        return pd.DataFrame(self.results_data)
 
     def reset(self, seed=None, options=None):
         if seed is not None:
@@ -88,7 +90,8 @@ class SAPSOEnv(gym.Env):
             number_particles=self.n_s,
             fitness_function=self.ff,
             expected_iterations=self.t_max,
-            stagnation_patience=self.stagnation_patience
+            stagnation_patience=self.stagnation_patience,
+            seed=seed
         )
         self.current_step = 0
         return self._get_observation(), {"function": self.ff.__class__.__name__}
@@ -120,7 +123,7 @@ class SAPSOEnv(gym.Env):
                 self.current_step += 1
 
                 # Capture per-swarm-step metrics
-                self._results_data.append({
+                self.results_data.append({
                     "nt": self.n_t,
                     "step_number": self.current_step,
                     "function_name": self.ff.__class__.__name__,

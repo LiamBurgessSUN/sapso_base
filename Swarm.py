@@ -7,7 +7,8 @@ class Swarm:
                  fitness_function: FitnessFunction,
                  expected_iterations: int = 5000,
                  stagnation_threshold: float = 1e-12,
-                 stagnation_patience: int = 200):
+                 stagnation_patience: int = 200,
+                 seed: int = 42):
         self.number_particles = number_particles
         self.bounds = fitness_function.bounds
         self.ff = fitness_function
@@ -16,11 +17,11 @@ class Swarm:
         self.stagnation_patience = stagnation_patience
         self.patience_counter = 0
 
-        self.seed = 42
+        self.seed = seed
         np.random.seed(seed=self.seed)
 
         self.fitness = np.full((number_particles,), np.inf)
-        self.velocity = np.random.uniform(low=0.25, high=0.4, size=(number_particles, 30))
+        self.velocity = np.random.uniform(low=0.25, high=0.6, size=(number_particles, 30))
         self.position = np.random.uniform(low=self.bounds[0] + 0.2, high=self.bounds[1] - 0.2,
                                           size=(number_particles, 30))
         self.local_best_position = self.position.copy()

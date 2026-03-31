@@ -36,10 +36,14 @@ def run_rl_trial(model, func_class, trial_seed):
 def run_constant_baseline_trial(func_class, trial_seed):
     """Fixed Parameters (Clerc & Kennedy)."""
     ff = func_class()
-    swarm = Swarm(number_particles=NUM_PARTICLES, fitness_function=ff, expected_iterations=MAX_STEPS)
+    swarm = Swarm(
+        number_particles=NUM_PARTICLES,
+        fitness_function=ff,
+        expected_iterations=MAX_STEPS,
+        seed=trial_seed
+    )
     swarm.set_control_parameters(1.496180, 1.496180, 0.729844)
 
-    np.random.seed(trial_seed)
     for i in range(MAX_STEPS):
         swarm.step(i)
         if swarm.is_stagnated(): break
@@ -49,9 +53,13 @@ def run_constant_baseline_trial(func_class, trial_seed):
 def run_tvac_baseline_trial(func_class, trial_seed):
     """Time-Variant Acceleration Coefficients (Eq. 3)."""
     ff = func_class()
-    swarm = Swarm(number_particles=NUM_PARTICLES, fitness_function=ff, expected_iterations=MAX_STEPS)
+    swarm = Swarm(
+        number_particles=NUM_PARTICLES,
+        fitness_function=ff,
+        expected_iterations=MAX_STEPS,
+        seed=trial_seed
+    )
 
-    np.random.seed(trial_seed)
     for i in range(MAX_STEPS):
         # Apply Eq. 3 Logic
         w = 0.4 * ((i - MAX_STEPS) / MAX_STEPS) ** 2 + 0.4
@@ -81,6 +89,7 @@ def perform_statistical_analysis():
         rl_data, const_data, tvac_data = [], [], []
 
         for i in range(NUM_TRIALS):
+            # Seed propagation unique for each trial but synced across methods
             seed = 1000 + i
             rl_data.append(run_rl_trial(model, func_class, seed))
             const_data.append(run_constant_baseline_trial(func_class, seed))

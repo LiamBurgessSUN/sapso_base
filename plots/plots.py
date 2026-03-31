@@ -6,6 +6,36 @@ import matplotlib.pyplot as plt
 from Swarm import Swarm
 
 
+def plot_runs_from_dataframe(runs_groupby, metric: str = "best_fitness", title: str = "", use_log: bool = True):
+    """
+    Extracts multiple independent runs from a Pandas GroupBy object and plots them interactively.
+
+    Args:
+        runs_groupby: A Pandas DataFrameGroupBy object (e.g., df.groupby(["run"]))
+        metric (str): The column name to plot (e.g., "best_fitness", "avg_velocity")
+        title (str): Optional title prefix
+        use_log (bool): Whether to use a log scale for the Y-axis
+    """
+    series_list = []
+    labels = []
+
+    for run_id, group_df in runs_groupby:
+        # If your run_id comes out as a tuple (depending on pandas version), extract the first element
+        run_label = run_id[0] if isinstance(run_id, tuple) else run_id
+
+        series_list.append(group_df[metric].tolist())
+        labels.append(f"Run {run_label}")
+
+    plot_title = f"{title}: {metric}" if title else f"{len(labels)} Independent Runs: {metric}"
+
+    plot_multiple_series_any(
+        series_list=series_list,
+        labels=labels,
+        title=plot_title,
+        use_log=use_log
+    )
+
+
 def plot_multiple_series(series_list: list, labels: list, title: str = "", use_log: bool = False):
     """
     Plots multiple data series on a single graph.
@@ -41,6 +71,56 @@ def plot_multiple_series(series_list: list, labels: list, title: str = "", use_l
         plt.yscale('symlog', linthresh=1e-6)
 
     plt.legend()
+    plt.tight_layout()
+    plt.show()
+
+
+def plot_multiple_series_any(series_list: list, labels: list, title: str = "", use_log: bool = False):
+    """
+    Plots multiple data series on a single graph.
+    Expects series_list to be a list of lists/arrays of equal length.
+    Applies a color gradient to the lines based on the number of series.
+    """
+    sns.set_theme(style="whitegrid")
+    plt.figure(figsize=(12, 8))  # Increased height to space y-axis wider
+
+    # Check if all series have the same length
+    lengths = [len(s) for s in series_list]
+    num_iterations = max(lengths) if lengths else 0
+
+    num_series = len(series_list)
+    # Generate a color gradient palette based on the exact number of series
+    palette = sns.color_palette("viridis", n_colors=num_series)
+
+    for i, data in enumerate(series_list):
+        label = labels[i] if i < len(labels) else f"Series {i + 1}"
+        sns.lineplot(
+            x=np.arange(len(data)),
+            y=data,
+            linewidth=1.5,
+            label=label,
+            color=palette[i]  # Apply the gradient color here
+        )
+
+    # Professional Labeling & Styling
+    plt.title(f"{title} ({num_iterations} Iterations)", fontsize=16)
+    plt.xlabel("Iteration Index", fontsize=12)
+    plt.ylabel("Value (SymLog Scale)" if use_log else "Value", fontsize=12)
+
+    # Maintain the 'Breathing Room' on the X-Axis and Y-Axis
+    plt.xlim(-num_iterations * 0.02, num_iterations * 1.02)
+    plt.margins(y=0.15)  # Adds 15% extra padding to the top and bottom of the graph
+
+    # Apply Symmetrical Log Scale if requested
+    if use_log:
+        plt.yscale('symlog', linthresh=1e-6)
+
+    # Handle the legend intelligently if there are many lines
+    if num_series > 10:
+        plt.legend(bbox_to_anchor=(1.01, 1), loc='upper left', borderaxespad=0.)
+    else:
+        plt.legend()
+
     plt.tight_layout()
     plt.show()
 

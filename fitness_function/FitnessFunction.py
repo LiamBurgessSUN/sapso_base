@@ -124,7 +124,9 @@ class Mishra1Function(FitnessFunction):
     def _fitness_function_invoke(self, positions: np.ndarray) -> np.ndarray:
         n = positions.shape[1]
         val = (1 + n - np.sum(positions[:, :-1], axis=1))
-        return val**val
+        # Numerical safety clip for power operation during particle explosion
+        safe_val = np.maximum(val, 1e-12)
+        return safe_val**val
 
 class Mishra4Function(FitnessFunction):
     def __init__(self): self.bounds = (-10, 10)
@@ -280,7 +282,10 @@ class TrigonometricFunction(FitnessFunction):
 class VincentFunction(FitnessFunction):
     def __init__(self): self.bounds = (0.25, 10)
     def _fitness_function_invoke(self, positions: np.ndarray) -> np.ndarray:
-        return -np.sum(np.sin(10 * np.log(positions)), axis=1)
+        # Safety clip: ensure positions are positive before log operation
+        # Particles outside bounds will be set to np.inf in Swarm.py anyway.
+        safe_pos = np.maximum(positions, 1e-12)
+        return -np.sum(np.sin(10 * np.log(safe_pos)), axis=1)
 
 class WeierstrassFunction(FitnessFunction):
     def __init__(self):

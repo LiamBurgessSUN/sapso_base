@@ -5,10 +5,28 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="4ba59f72-512a-4ff3-b217-2cfe2d38bd17" name="Changes" comment="weights">
-      <change afterPath="$PROJECT_DIR$/train_results/analysis.ipynb" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/plots/__init__.py" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/plots/plotly_plots.py" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/statistic_eval.py" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/test_results/analysis.ipynb" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/trial_results/analysis.ipynb" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.gitignore" beforeDir="false" afterPath="$PROJECT_DIR$/.gitignore" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/Swarm.py" beforeDir="false" afterPath="$PROJECT_DIR$/Swarm.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/fitness_function/FitnessFunction.py" beforeDir="false" afterPath="$PROJECT_DIR$/fitness_function/FitnessFunction.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/plots.py" beforeDir="false" afterPath="$PROJECT_DIR$/plots/plots.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/policies/sac_sapso_policy_nt_10.zip" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/policies/sac_sapso_policy_nt_100.zip" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/policies/sac_sapso_policy_nt_125.zip" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/policies/sac_sapso_policy_nt_25.zip" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/policies/sac_sapso_policy_nt_50.zip" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/policies/sac_sapso_policy_nt_auto.zip" beforeDir="false" />
       <change beforePath="$PROJECT_DIR$/pyproject.toml" beforeDir="false" afterPath="$PROJECT_DIR$/pyproject.toml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/rl_env_wrapper.py" beforeDir="false" afterPath="$PROJECT_DIR$/rl_env_wrapper.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/rl_eval.py" beforeDir="false" afterPath="$PROJECT_DIR$/rl_eval.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/rl_train.py" beforeDir="false" afterPath="$PROJECT_DIR$/rl_train.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/t_test.py" beforeDir="false" afterPath="$PROJECT_DIR$/t_test.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/train_results/analysis.ipynb" beforeDir="false" afterPath="$PROJECT_DIR$/train_results/analysis.ipynb" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/uv.lock" beforeDir="false" afterPath="$PROJECT_DIR$/uv.lock" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
@@ -19,8 +37,8 @@
   <component name="FileTemplateManagerImpl">
     <option name="RECENT_TEMPLATES">
       <list>
-        <option value="Python Script" />
         <option value="Jupyter Notebook" />
+        <option value="Python Script" />
       </list>
     </option>
   </component>
@@ -39,38 +57,44 @@
     <option name="hideEmptyMiddlePackages" value="true" />
     <option name="showLibraryContents" value="true" />
   </component>
-  <component name="PropertiesComponent">{
-  &quot;keyToString&quot;: {
-    &quot;Python.RL.executor&quot;: &quot;Run&quot;,
-    &quot;Python.eval.executor&quot;: &quot;Run&quot;,
-    &quot;Python.main.executor&quot;: &quot;Run&quot;,
-    &quot;Python.rl_eval.executor&quot;: &quot;Run&quot;,
-    &quot;Python.rl_train.executor&quot;: &quot;Run&quot;,
-    &quot;Python.swarm_eval.executor&quot;: &quot;Run&quot;,
-    &quot;Python.t_test.executor&quot;: &quot;Run&quot;,
-    &quot;RunOnceActivity.ShowReadmeOnStart&quot;: &quot;true&quot;,
-    &quot;RunOnceActivity.git.unshallow&quot;: &quot;true&quot;,
-    &quot;git-widget-placeholder&quot;: &quot;main&quot;,
-    &quot;ignore.virus.scanning.warn.message&quot;: &quot;true&quot;,
-    &quot;last_opened_file_path&quot;: &quot;//wsl.localhost/Ubuntu-22.04/home/liam/research/pso/papers&quot;,
-    &quot;node.js.detected.package.eslint&quot;: &quot;true&quot;,
-    &quot;node.js.detected.package.tslint&quot;: &quot;true&quot;,
-    &quot;node.js.selected.package.eslint&quot;: &quot;(autodetect)&quot;,
-    &quot;node.js.selected.package.tslint&quot;: &quot;(autodetect)&quot;,
-    &quot;nodejs_package_manager_path&quot;: &quot;npm&quot;,
-    &quot;settings.editor.selected.configurable&quot;: &quot;configurable.group.language&quot;,
-    &quot;vue.rearranger.settings.migration&quot;: &quot;true&quot;
+  <component name="PropertiesComponent"><![CDATA[{
+  "keyToString": {
+    "Python.RL.executor": "Run",
+    "Python.eval.executor": "Run",
+    "Python.main.executor": "Run",
+    "Python.rl_eval.executor": "Run",
+    "Python.rl_train.executor": "Run",
+    "Python.statistic_eval.executor": "Run",
+    "Python.swarm_eval.executor": "Run",
+    "Python.t_test.executor": "Run",
+    "RunOnceActivity.ShowReadmeOnStart": "true",
+    "RunOnceActivity.git.unshallow": "true",
+    "git-widget-placeholder": "main",
+    "ignore.virus.scanning.warn.message": "true",
+    "junie.onboarding.icon.badge.shown": "true",
+    "last_opened_file_path": "//wsl.localhost/Ubuntu-22.04/home/liam/research/pso/trial_results",
+    "node.js.detected.package.eslint": "true",
+    "node.js.detected.package.tslint": "true",
+    "node.js.selected.package.eslint": "(autodetect)",
+    "node.js.selected.package.tslint": "(autodetect)",
+    "nodejs_package_manager_path": "npm",
+    "settings.editor.selected.configurable": "com.jetbrains.python.configuration.PyActiveSdkModuleConfigurable",
+    "vue.rearranger.settings.migration": "true"
   }
-}</component>
+}]]></component>
   <component name="RecentsManager">
     <key name="CopyFile.RECENT_KEYS">
+      <recent name="\\wsl.localhost\Ubuntu-22.04\home\liam\research\pso\trial_results" />
+      <recent name="\\wsl.localhost\Ubuntu-22.04\home\liam\research\pso\test_results" />
       <recent name="\\wsl.localhost\Ubuntu-22.04\home\liam\research\pso\papers" />
     </key>
     <key name="MoveFile.RECENT_KEYS">
+      <recent name="\\wsl.localhost\Ubuntu-22.04\home\liam\research\pso\plots" />
+      <recent name="\\wsl.localhost\Ubuntu-22.04\home\liam\research\pso\trial_results" />
       <recent name="\\wsl.localhost\Ubuntu-22.04\home\liam\research\pso\train_results" />
     </key>
   </component>
-  <component name="RunManager" selected="Python.rl_eval">
+  <component name="RunManager" selected="Python.statistic_eval">
     <configuration name="main" type="PythonConfigurationType" factoryName="Python">
       <module name="pso" />
       <option name="ENV_FILES" value="" />
@@ -141,6 +165,29 @@
       <option name="INPUT_FILE" value="" />
       <method v="2" />
     </configuration>
+    <configuration name="statistic_eval" type="PythonConfigurationType" factoryName="Python" temporary="true" nameIsGenerated="true">
+      <module name="pso" />
+      <option name="ENV_FILES" value="" />
+      <option name="INTERPRETER_OPTIONS" value="" />
+      <option name="PARENT_ENVS" value="true" />
+      <envs>
+        <env name="PYTHONUNBUFFERED" value="1" />
+      </envs>
+      <option name="SDK_HOME" value="" />
+      <option name="WORKING_DIRECTORY" value="$PROJECT_DIR$" />
+      <option name="IS_MODULE_SDK" value="true" />
+      <option name="ADD_CONTENT_ROOTS" value="true" />
+      <option name="ADD_SOURCE_ROOTS" value="true" />
+      <EXTENSION ID="PythonCoverageRunConfigurationExtension" runner="coverage.py" />
+      <option name="SCRIPT_NAME" value="$PROJECT_DIR$/statistic_eval.py" />
+      <option name="PARAMETERS" value="" />
+      <option name="SHOW_COMMAND_LINE" value="false" />
+      <option name="EMULATE_TERMINAL" value="false" />
+      <option name="MODULE_MODE" value="false" />
+      <option name="REDIRECT_INPUT" value="false" />
+      <option name="INPUT_FILE" value="" />
+      <method v="2" />
+    </configuration>
     <configuration name="swarm_eval" type="PythonConfigurationType" factoryName="Python" temporary="true" nameIsGenerated="true">
       <module name="pso" />
       <option name="ENV_FILES" value="" />
@@ -189,13 +236,15 @@
     </configuration>
     <list>
       <item itemvalue="Python.main" />
-      <item itemvalue="Python.t_test" />
-      <item itemvalue="Python.swarm_eval" />
+      <item itemvalue="Python.statistic_eval" />
       <item itemvalue="Python.rl_eval" />
       <item itemvalue="Python.rl_train" />
+      <item itemvalue="Python.swarm_eval" />
+      <item itemvalue="Python.t_test" />
     </list>
     <recent_temporary>
       <list>
+        <item itemvalue="Python.statistic_eval" />
         <item itemvalue="Python.rl_eval" />
         <item itemvalue="Python.rl_train" />
         <item itemvalue="Python.t_test" />
@@ -234,7 +283,20 @@
       <workItem from="1773767984416" duration="7750000" />
       <workItem from="1773847207845" duration="10850000" />
       <workItem from="1773925875617" duration="2385000" />
-      <workItem from="1773934449341" duration="2542000" />
+      <workItem from="1773934449341" duration="4074000" />
+      <workItem from="1773938589007" duration="4253000" />
+      <workItem from="1773988940452" duration="4397000" />
+      <workItem from="1774173028168" duration="1079000" />
+      <workItem from="1774174124279" duration="61000" />
+      <workItem from="1774174193691" duration="909000" />
+      <workItem from="1774203928418" duration="3844000" />
+      <workItem from="1774211935840" duration="769000" />
+      <workItem from="1774212754648" duration="1809000" />
+      <workItem from="1774214584122" duration="1689000" />
+      <workItem from="1774537403593" duration="1670000" />
+      <workItem from="1774539208533" duration="623000" />
+      <workItem from="1774970405894" duration="842000" />
+      <workItem from="1774971266221" duration="959000" />
     </task>
     <task id="LOCAL-00001" summary="pso class">
       <option name="closed" value="true" />
@@ -380,7 +442,15 @@
       <option name="project" value="LOCAL" />
       <updated>1773934065921</updated>
     </task>
-    <option name="localTasksCounter" value="19" />
+    <task id="LOCAL-00019" summary="weights">
+      <option name="closed" value="true" />
+      <created>1773937131397</created>
+      <option name="number" value="00019" />
+      <option name="presentableId" value="LOCAL-00019" />
+      <option name="project" value="LOCAL" />
+      <updated>1773937131397</updated>
+    </task>
+    <option name="localTasksCounter" value="20" />
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">
@@ -400,9 +470,9 @@
     <breakpoint-manager>
       <breakpoints>
         <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
-          <url>file://$PROJECT_DIR$/plots.py</url>
-          <line>72</line>
-          <option name="timeStamp" value="1" />
+          <url>file://$PROJECT_DIR$/rl_train.py</url>
+          <line>19</line>
+          <option name="timeStamp" value="2" />
         </line-breakpoint>
       </breakpoints>
     </breakpoint-manager>
@@ -414,11 +484,12 @@
   </component>
   <component name="com.intellij.coverage.CoverageDataManagerImpl">
     <SUITE FILE_PATH="coverage/pso$t_test.coverage" NAME="t_test Coverage Results" MODIFIED="1773776553398" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="false" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$" />
+    <SUITE FILE_PATH="coverage/pso$statistic_eval.coverage" NAME="statistic_eval Coverage Results" MODIFIED="1774538052788" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="false" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$" />
     <SUITE FILE_PATH="coverage/pso$swarm_eval.coverage" NAME="swarm_eval Coverage Results" MODIFIED="1773598474497" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="false" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$" />
     <SUITE FILE_PATH="coverage/pso$main.coverage" NAME="main Coverage Results" MODIFIED="1772999494873" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="false" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="C:\Users\Liam\Documents\Research\pso" />
     <SUITE FILE_PATH="coverage/pso$eval.coverage" NAME="rl_eval Coverage Results" MODIFIED="1773000423142" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="false" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$" />
-    <SUITE FILE_PATH="coverage/pso$rl_train.coverage" NAME="rl_train Coverage Results" MODIFIED="1773894950961" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="false" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$" />
+    <SUITE FILE_PATH="coverage/pso$rl_train.coverage" NAME="rl_train Coverage Results" MODIFIED="1774015070018" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="false" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$" />
     <SUITE FILE_PATH="coverage/pso$RL.coverage" NAME="RL Coverage Results" MODIFIED="1772994254971" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="false" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$" />
-    <SUITE FILE_PATH="coverage/pso$rl_eval.coverage" NAME="rl_eval Coverage Results" MODIFIED="1773936923995" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="false" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$" />
+    <SUITE FILE_PATH="coverage/pso$rl_eval.coverage" NAME="rl_eval Coverage Results" MODIFIED="1774175030801" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="false" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$" />
   </component>
 </project>
