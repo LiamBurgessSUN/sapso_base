@@ -53,7 +53,7 @@ if __name__ == "__main__":
 
             for step in range(MAX_ITERATIONS):
                 # Execute one step of PSO
-                swarm.step(step)
+                swarm.step()
 
                 # Collect metrics for analysis
                 results_data.append({

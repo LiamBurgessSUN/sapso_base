@@ -102,7 +102,7 @@ if __name__ == "__main__":
                     swarm.set_control_parameters(inertia, c1, c2)
 
                 # Execute one step of PSO
-                swarm.step(step)
+                swarm.step()
 
                 # Collect metrics for analysis
                 results_data.append({

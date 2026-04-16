@@ -8,7 +8,11 @@ class Swarm:
                  expected_iterations: int = 5000,
                  stagnation_threshold: float = 1e-12,
                  stagnation_patience: int = 200,
-                 seed: int = 42):
+                 seed: int = 42,
+                 clamping=True):
+
+        self.clamping = clamping
+
         self.number_particles = number_particles
         self.bounds = fitness_function.bounds
         self.ff = fitness_function
@@ -104,7 +108,7 @@ class Swarm:
         self.local_cognitive_c1_log.append(self.local_cognitive_c1)
         self.global_cognitive_c2_log.append(self.global_cognitive_c2)
 
-    def step(self, iteration: int = 0):
+    def step(self):
         self.sample_diversity()
         self.stability_log.append(self.sample_stability())
         self.sample_control_values()
@@ -139,7 +143,8 @@ class Swarm:
                          self.local_cognitive_c1 * r1 * (self.local_best_position - self.position) +
                          self.global_cognitive_c2 * r2 * (self.global_best_position - self.position))
 
-        self.clamp_velocities_simple_bound()
+        if self.clamping:
+            self.clamp_velocities_simple_bound()
 
         prior_pos = self.position.copy()
         self.position += self.velocity

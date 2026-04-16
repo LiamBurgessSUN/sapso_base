@@ -38,7 +38,7 @@ def format_by_run(
 
 
 if __name__ == '__main__':
-    df = pd.read_json("trial_results/sac_sapso_policy_nt_125.json")
+    df = pd.read_json("pso_paper_results/time_based.json")
     print(df.columns)
     print(df.shape)
 
