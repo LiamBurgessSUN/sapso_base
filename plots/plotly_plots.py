@@ -1,3 +1,5 @@
+from typing import Dict, List, Optional
+
 import numpy as np
 import pandas as pd
 import plotly.graph_objects as go
@@ -6,47 +8,79 @@ import plotly.colors as pc
 from Swarm import Swarm
 
 
-def plot_runs_from_dataframe(runs_groupby, metric: str = "best_fitness", title: str = "", use_log: bool = True):
+def plot_runs_from_dataframe(
+        df: pd.DataFrame,
+        metric: str = "best_fitness",
+        title: str = "",
+        use_log: bool = True
+):
     """
-    Extracts multiple independent runs from a Pandas GroupBy object and plots them interactively.
+    Extracts multiple independent runs from a Pandas DataFrame and plots them.
 
-    Args:
-        runs_groupby: A Pandas DataFrameGroupBy object (e.g., df.groupby(["run"]))
-        metric (str): The column name to plot (e.g., "best_fitness", "avg_velocity")
-        title (str): Optional title prefix
-        use_log (bool): Whether to use a log scale for the Y-axis
+    This matches the evaluation methodology in von Eschwege & Engelbrecht (2024),
+    where independent runs are used to assess algorithm performance.
     """
     series_list = []
     labels = []
+    all_final_values = []
 
-    for run_id, group_df in runs_groupby:
-        # If your run_id comes out as a tuple (depending on pandas version), extract the first element
-        run_label = run_id[0] if isinstance(run_id, tuple) else run_id
+    # 1. Grouping and Prep
+    runs = df.groupby("run")
 
-        series_list.append(group_df[metric].tolist())
-        labels.append(f"Run {run_label}")
+    for run_id, group_df in runs:
+        # Ensure correct temporal ordering for the line plot
+        sorted_group = group_df.sort_values("step_number")
 
-    plot_title = f"{title}: {metric}" if title else f"{len(labels)} Independent Runs: {metric}"
+        series_list.append(sorted_group[metric].values)
+        labels.append(f"Run {run_id}")
+        all_final_values.append(sorted_group[metric].iloc[-1])
 
-    plot_multiple_series_any(
-        series_list=series_list,
+    # 2. Plotting using the series utility
+    plot_title = title if title else f"Swarm Dynamics: {metric}"
+
+    plot_multiple_series(
+        mean_list=series_list,
+        std_list=None,
         labels=labels,
         title=plot_title,
         use_log=use_log
     )
 
+    # Log summary statistics (SwarmProf style)
+    print(f"📊 {metric} Final State Stats ({len(series_list)} runs):")
+    print(f"   - Mean: {np.mean(all_final_values):.4e}")
+    print(f"   - StdDev: {np.std(all_final_values):.4e}")
 
-def plot_multiple_series(series_list: list, labels: list, title: str = "", use_log: bool = False):
-    """
-    Plots multiple data series on a single interactive graph using Plotly.
-    Expects series_list to be a list of lists/arrays of equal length.
-    Applies a color gradient to the lines based on the number of series.
-    """
-    lengths = [len(s) for s in series_list]
-    num_iterations = max(lengths) if lengths else 0
-    num_series = len(series_list)
 
-    # Generate a color gradient palette scaled to the exact number of series
+def plot_multiple_series(
+        mean_list: List[np.ndarray],
+        std_list: Optional[List[np.ndarray]] = None,
+        labels: List[str] = None,
+        title: str = "",
+        use_log: bool = False,
+        horizontal_lines: Optional[Dict[str, float]] = None
+):
+    """
+    Plots multiple data series (Mean + Optional Std Dev Shading) using Plotly.
+    Expects mean_list to be a list of arrays of equal length.
+    If std_list is provided, it applies ribbon shading for variance.
+
+    Args:
+        mean_list: List of y-axis means.
+        std_list: Optional list of y-axis standard deviations.
+        labels: Names for the legend.
+        title: Main plot title.
+        use_log: Use logarithmic scale for y-axis.
+        horizontal_lines: Optional dict of {label: y_value} for dashed reference lines.
+    """
+    num_series = len(mean_list)
+    if num_series == 0:
+        return
+
+    if labels is None:
+        labels = [f"Series {i + 1}" for i in range(num_series)]
+
+    # Generate a color gradient palette (Viridis)
     if num_series > 1:
         colors = pc.sample_colorscale("viridis", [i / (num_series - 1) for i in range(num_series)])
     else:
@@ -54,30 +88,69 @@ def plot_multiple_series(series_list: list, labels: list, title: str = "", use_l
 
     fig = go.Figure()
 
-    for i, data in enumerate(series_list):
+    for i, mean_data in enumerate(mean_list):
+        mean_data = np.array(mean_data)
         label = labels[i] if i < len(labels) else f"Series {i + 1}"
+        color = colors[i]
+        x = np.arange(len(mean_data))
+
+        # Add Shading if std_list is provided
+        if std_list is not None and i < len(std_list) and std_list[i] is not None:
+            std_data = np.array(std_list[i])
+            # Convert hex/rgb to rgba for transparent shading
+            fill_color = color.replace('rgb', 'rgba').replace(')', ', 0.2)')
+
+            x_rev = x[::-1]
+            y_upper = mean_data + std_data
+            y_lower = mean_data - std_data
+
+            fig.add_trace(go.Scatter(
+                x=np.concatenate([x, x_rev]),
+                y=np.concatenate([y_upper, y_lower[::-1]]),
+                fill='toself',
+                fillcolor=fill_color,
+                line=dict(color='rgba(255,255,255,0)'),
+                hoverinfo="skip",
+                showlegend=False,
+                name=f"{label} variance"
+            ))
+
+        # Mean Line trace
         fig.add_trace(go.Scatter(
-            x=np.arange(len(data)),
-            y=data,
+            x=x,
+            y=mean_data,
             mode='lines',
             name=label,
-            line=dict(width=1.5, color=colors[i])
+            line=dict(width=2, color=color)
         ))
 
-    layout_args = dict(
+    # Add optional horizontal reference lines
+    if horizontal_lines:
+        num_iterations = len(mean_list[0])
+        for line_label, y_val in horizontal_lines.items():
+            fig.add_shape(
+                type="line",
+                x0=0, y0=y_val, x1=num_iterations, y1=y_val,
+                line=dict(color="Red", width=2, dash="dashdot"),
+            )
+            fig.add_trace(go.Scatter(
+                x=[num_iterations * 0.95],
+                y=[y_val],
+                text=[line_label],
+                mode="text",
+                textposition="bottom left",
+                showlegend=False
+            ))
+
+    num_iterations = len(mean_list[0])
+    fig.update_layout(
         title=f"{title} ({num_iterations} Iterations)",
-        title_font_size=16,
         xaxis_title="Iteration Index",
         yaxis_title="Value (Log Scale)" if use_log else "Value",
-        xaxis=dict(range=[-num_iterations * 0.02, num_iterations * 1.02]),
         template="plotly_white",
         height=600,
+        hovermode="x unified"
     )
-
-    if num_series > 10:
-        layout_args["legend"] = dict(x=1.02, y=1, xanchor="left", yanchor="top")
-
-    fig.update_layout(**layout_args)
 
     if use_log:
         fig.update_yaxes(type="log")

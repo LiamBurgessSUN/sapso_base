@@ -6,34 +6,76 @@ import matplotlib.pyplot as plt
 from Swarm import Swarm
 
 
-def plot_runs_from_dataframe(runs_groupby, metric: str = "best_fitness", title: str = "", use_log: bool = True):
+def plot_runs_from_dataframe(
+        df: pd.DataFrame,
+        metric: str = "best_fitness",
+        title: str = "",
+        use_log: bool = True
+):
     """
-    Extracts multiple independent runs from a Pandas GroupBy object and plots them interactively.
+    Groups a DataFrame by 'run' and 'step_number', then plots trajectories for a metric.
+
+    This implementation follows the empirical analysis structure of von Eschwege & Engelbrecht (2024),
+    where solution quality and swarm characteristics are tracked across independent runs
+    to assess the effectiveness of the SAC-SAPSO agent.
 
     Args:
-        runs_groupby: A Pandas DataFrameGroupBy object (e.g., df.groupby(["run"]))
-        metric (str): The column name to plot (e.g., "best_fitness", "avg_velocity")
-        title (str): Optional title prefix
-        use_log (bool): Whether to use a log scale for the Y-axis
+        df: The raw experiment DataFrame.
+        metric: The column name to plot (e.g., 'best_fitness', 'diversity', 'velocity').
+        title: Optional plot title.
+        use_log: If True, uses a logarithmic scale for the y-axis (recommended for fitness/diversity).
     """
-    series_list = []
-    labels = []
+    # 1. Grouping logic
+    # We group by 'run' to separate independent trajectories.
+    # We don't group by 'step_number' for the line itself, but we sort by it to ensure
+    # the temporal progression is correct in the visualization.
+    runs = df.groupby("run")
 
-    for run_id, group_df in runs_groupby:
-        # If your run_id comes out as a tuple (depending on pandas version), extract the first element
-        run_label = run_id[0] if isinstance(run_id, tuple) else run_id
+    plt.figure(figsize=(10, 6))
 
-        series_list.append(group_df[metric].tolist())
-        labels.append(f"Run {run_label}")
+    all_final_values = []
 
-    plot_title = f"{title}: {metric}" if title else f"{len(labels)} Independent Runs: {metric}"
+    for run_id, group_df in runs:
+        # Ensure correct temporal ordering for the line plot
+        sorted_group = group_df.sort_values("step_number")
 
-    plot_multiple_series_any(
-        series_list=series_list,
-        labels=labels,
-        title=plot_title,
-        use_log=use_log
-    )
+        # Plot the individual run trajectory
+        plt.plot(
+            sorted_group["step_number"],
+            sorted_group[metric],
+            alpha=0.4,  # Lower alpha for individual runs to handle overlap
+            linewidth=1,
+            label=f"Run {run_id}" if len(runs) <= 10 else None  # Avoid legend clutter
+        )
+
+        # Track final values for potential stats reporting
+        all_final_values.append(sorted_group[metric].iloc[-1])
+
+    # Styling and Labels
+    if use_log:
+        plt.yscale("log")
+        plt.ylabel(f"{metric} (Log Scale)")
+    else:
+        plt.ylabel(metric)
+
+    plt.xlabel("Time Step (t)")
+
+    # Paper-style titles
+    plot_title = title if title else f"Convergence Behavior: {metric}"
+    plt.title(plot_title)
+
+    plt.grid(True, which="both", ls="-", alpha=0.2)
+
+    if len(runs) <= 10:
+        plt.legend(loc='upper right', fontsize='small')
+
+    plt.tight_layout()
+    plt.show()
+
+    # Log summary statistics to console (SwarmProf style)
+    print(f"📊 {metric} Stats (across {len(runs)} runs):")
+    print(f"   - Mean: {np.mean(all_final_values):.4e}")
+    print(f"   - StdDev: {np.std(all_final_values):.4e}")
 
 
 def plot_multiple_series(series_list: list, labels: list, title: str = "", use_log: bool = False):
