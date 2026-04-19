@@ -4,12 +4,11 @@ from typing import Type
 
 from fitness_function.FitnessFunction import (
     FitnessFunction,
-    TRAINING_SET,
     EVALUATION_SET
 )
 
 from Swarm import Swarm
-from plots import plot_swarm
+from results.plots import plot_swarm
 
 # ======================================================================
 # CONFIGURATION BLOCK - BASELINE BENCHMARKING

@@ -4,12 +4,12 @@ from scipy import stats
 from stable_baselines3 import SAC
 
 from fitness_function.FitnessFunction import EVALUATION_SET
-from rl_env_wrapper import SAPSOEnv
-from Swarm import Swarm
+from RL.rl_env_wrapper import SAPSOEnv
+from PSO.Swarm import Swarm
 
 # Research Configuration (Ref: Section 4.2)
 NUM_TRIALS = 30
-MODEL_PATH = "policies/sac_sapso_policy_nt_125.zip"
+MODEL_PATH = "../policies/sac_sapso_policy_nt_125.zip"
 NUM_PARTICLES = 30
 DIM = 30
 MAX_STEPS = 5000

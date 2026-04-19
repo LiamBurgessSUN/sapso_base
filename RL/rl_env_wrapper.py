@@ -5,8 +5,8 @@ from stable_baselines3.common.callbacks import BaseCallback
 import random
 import pandas as pd
 
-from Swarm import Swarm
-from fitness_function.FitnessFunction import TRAINING_SET, EVALUATION_SET
+from PSO.Swarm import Swarm
+from fitness_function.FitnessFunction import TRAINING_SET
 
 
 class ParameterLoggingCallback(BaseCallback):

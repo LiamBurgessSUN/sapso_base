@@ -3,7 +3,7 @@ import pandas as pd
 from stable_baselines3 import SAC
 from rl_env_wrapper import SAPSOEnv
 from fitness_function.FitnessFunction import EVALUATION_SET
-from plots.plotly_plots import plot_swarm
+from results.plots.plotly_plots import plot_swarm
 
 
 def run_single_evaluation(model, func_class, num_particles=30, dim=30, patience=200, auto=False, seed=17,

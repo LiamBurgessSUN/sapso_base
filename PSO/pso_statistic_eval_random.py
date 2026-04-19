@@ -1,7 +1,7 @@
 import numpy as np
 import pandas as pd
 from typing import Tuple, Optional
-from Swarm import Swarm
+from PSO.Swarm import Swarm
 from fitness_function.FitnessFunction import EVALUATION_SET
 
 SET_SIZE = len(EVALUATION_SET)

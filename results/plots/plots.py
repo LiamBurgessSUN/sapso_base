@@ -3,7 +3,7 @@ import numpy as np
 import pandas as pd
 import matplotlib.pyplot as plt
 
-from Swarm import Swarm
+from PSO.Swarm import Swarm
 
 
 def plot_runs_from_dataframe(

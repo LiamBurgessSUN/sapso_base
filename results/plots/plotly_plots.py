@@ -5,7 +5,7 @@ import pandas as pd
 import plotly.graph_objects as go
 import plotly.colors as pc
 
-from Swarm import Swarm
+from PSO.Swarm import Swarm
 
 
 def plot_runs_from_dataframe(
