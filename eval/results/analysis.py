@@ -38,7 +38,7 @@ def format_by_run(
 
 
 if __name__ == '__main__':
-    df = pd.read_json("pso_paper_results/time_based.json")
+    df = pd.read_json("pso_paper_results/lib/tvac.json")
     print(df.columns)
     print(df.shape)
 
@@ -49,8 +49,10 @@ if __name__ == '__main__':
 
     aggregate = (df.groupby(["step_number"])
     .agg(
-        vel_mean=("normalized_avg_velocity", np.mean),
-        vel_std=("normalized_avg_velocity", np.std),
+        norm_vel_mean=("normalized_avg_velocity", np.mean),
+        norm_vel_std=("normalized_avg_velocity", np.std),
+        vel_mean=("avg_velocity", np.mean),
+        vel_std=("avg_velocity", np.std),
         swarm_mean=("normalized_swarm_diversity", np.mean),
         swarm_std=("normalized_swarm_diversity", np.std),
         fitness_mean=("normalized_best_fitness", np.mean),
@@ -70,6 +72,9 @@ if __name__ == '__main__':
 
     # 1. Average Particle Velocity (Section 4.1, Metric 5)
     plot_values_line_with_std(5000, aggregate["vel_mean"].tolist(), aggregate["vel_std"].tolist(),
+                              "Average Particle Velocity", use_log=True)
+
+    plot_values_line_with_std(5000, aggregate["norm_vel_mean"].tolist(), aggregate["norm_vel_std"].tolist(),
                               "Average Particle Velocity", use_log=True)
 
     # 2. Swarm Diversity (Section 4.1, Metric 2)

@@ -1,1 +1,1 @@
-from results.plots import *
+from plots import *
