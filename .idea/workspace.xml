@@ -5,13 +5,8 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="4ba59f72-512a-4ff3-b217-2cfe2d38bd17" name="Changes" comment="checkpoint">
-      <change afterPath="$PROJECT_DIR$/lib_pso.py" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/results/__init__.py" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/eval/__init__.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/pso_paper_static_eval.py" beforeDir="false" afterPath="$PROJECT_DIR$/pso_paper_static_eval.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/pyproject.toml" beforeDir="false" afterPath="$PROJECT_DIR$/pyproject.toml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/uv.lock" beforeDir="false" afterPath="$PROJECT_DIR$/uv.lock" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/writeups/SAPSO Implementation/main.tex" beforeDir="false" afterPath="$PROJECT_DIR$/writeups/SAPSO Implementation/main.tex" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -85,14 +80,15 @@
       <recent name="\\wsl.localhost\Ubuntu-22.04\home\liam\research\pso\papers" />
     </key>
     <key name="MoveFile.RECENT_KEYS">
+      <recent name="\\wsl.localhost\Ubuntu-22.04\home\liam\research\pso\eval" />
+      <recent name="\\wsl.localhost\Ubuntu-22.04\home\liam\research\pso\PSO" />
+      <recent name="\\wsl.localhost\Ubuntu-22.04\home\liam\research\pso\results" />
+      <recent name="\\wsl.localhost\Ubuntu-22.04\home\liam\research\pso\RL" />
       <recent name="\\wsl.localhost\Ubuntu-22.04\home\liam\research\pso\pso_trial_results" />
-      <recent name="\\wsl.localhost\Ubuntu-22.04\home\liam\research\pso\plots" />
-      <recent name="\\wsl.localhost\Ubuntu-22.04\home\liam\research\pso\trial_results" />
-      <recent name="\\wsl.localhost\Ubuntu-22.04\home\liam\research\pso\train_results" />
     </key>
   </component>
-  <component name="RunManager" selected="Python.lib_pso">
-    <configuration name="analysis (1)" type="PythonConfigurationType" factoryName="Python" temporary="true" nameIsGenerated="true">
+  <component name="RunManager" selected="Python.pso_lib">
+    <configuration name="analysis" type="PythonConfigurationType" factoryName="Python" temporary="true" nameIsGenerated="true">
       <module name="pso" />
       <option name="ENV_FILES" value="" />
       <option name="INTERPRETER_OPTIONS" value="" />
@@ -106,7 +102,7 @@
       <option name="ADD_CONTENT_ROOTS" value="true" />
       <option name="ADD_SOURCE_ROOTS" value="true" />
       <EXTENSION ID="PythonCoverageRunConfigurationExtension" runner="coverage.py" />
-      <option name="SCRIPT_NAME" value="$PROJECT_DIR$/analysis.py" />
+      <option name="SCRIPT_NAME" value="\\wsl.localhost\Ubuntu-22.04\home\liam\research\pso\results\analysis.py" />
       <option name="PARAMETERS" value="" />
       <option name="SHOW_COMMAND_LINE" value="false" />
       <option name="EMULATE_TERMINAL" value="false" />
@@ -129,30 +125,7 @@
       <option name="ADD_CONTENT_ROOTS" value="true" />
       <option name="ADD_SOURCE_ROOTS" value="true" />
       <EXTENSION ID="PythonCoverageRunConfigurationExtension" runner="coverage.py" />
-      <option name="SCRIPT_NAME" value="\\wsl.localhost\Ubuntu-22.04\home\liam\research\pso\analysis.py" />
-      <option name="PARAMETERS" value="" />
-      <option name="SHOW_COMMAND_LINE" value="false" />
-      <option name="EMULATE_TERMINAL" value="false" />
-      <option name="MODULE_MODE" value="false" />
-      <option name="REDIRECT_INPUT" value="false" />
-      <option name="INPUT_FILE" value="" />
-      <method v="2" />
-    </configuration>
-    <configuration name="lib_pso" type="PythonConfigurationType" factoryName="Python" temporary="true" nameIsGenerated="true">
-      <module name="pso" />
-      <option name="ENV_FILES" value="" />
-      <option name="INTERPRETER_OPTIONS" value="" />
-      <option name="PARENT_ENVS" value="true" />
-      <envs>
-        <env name="PYTHONUNBUFFERED" value="1" />
-      </envs>
-      <option name="SDK_HOME" value="" />
-      <option name="WORKING_DIRECTORY" value="$PROJECT_DIR$" />
-      <option name="IS_MODULE_SDK" value="true" />
-      <option name="ADD_CONTENT_ROOTS" value="true" />
-      <option name="ADD_SOURCE_ROOTS" value="true" />
-      <EXTENSION ID="PythonCoverageRunConfigurationExtension" runner="coverage.py" />
-      <option name="SCRIPT_NAME" value="$PROJECT_DIR$/lib_pso.py" />
+      <option name="SCRIPT_NAME" value="\\wsl.localhost\Ubuntu-22.04\home\liam\research\pso\results\analysis.py" />
       <option name="PARAMETERS" value="" />
       <option name="SHOW_COMMAND_LINE" value="false" />
       <option name="EMULATE_TERMINAL" value="false" />
@@ -176,7 +149,30 @@
       <option name="ADD_CONTENT_ROOTS" value="true" />
       <option name="ADD_SOURCE_ROOTS" value="true" />
       <EXTENSION ID="PythonCoverageRunConfigurationExtension" runner="coverage.py" />
-      <option name="SCRIPT_NAME" value="\\wsl.localhost\Ubuntu-22.04\home\liam\research\pso\swarm_eval.py" />
+      <option name="SCRIPT_NAME" value="\\wsl.localhost\Ubuntu-22.04\home\liam\research\pso\PSO\swarm_eval.py" />
+      <option name="PARAMETERS" value="" />
+      <option name="SHOW_COMMAND_LINE" value="false" />
+      <option name="EMULATE_TERMINAL" value="false" />
+      <option name="MODULE_MODE" value="false" />
+      <option name="REDIRECT_INPUT" value="false" />
+      <option name="INPUT_FILE" value="" />
+      <method v="2" />
+    </configuration>
+    <configuration name="pso_lib" type="PythonConfigurationType" factoryName="Python" temporary="true" nameIsGenerated="true">
+      <module name="pso" />
+      <option name="ENV_FILES" value="" />
+      <option name="INTERPRETER_OPTIONS" value="" />
+      <option name="PARENT_ENVS" value="true" />
+      <envs>
+        <env name="PYTHONUNBUFFERED" value="1" />
+      </envs>
+      <option name="SDK_HOME" value="" />
+      <option name="WORKING_DIRECTORY" value="$PROJECT_DIR$" />
+      <option name="IS_MODULE_SDK" value="true" />
+      <option name="ADD_CONTENT_ROOTS" value="true" />
+      <option name="ADD_SOURCE_ROOTS" value="true" />
+      <EXTENSION ID="PythonCoverageRunConfigurationExtension" runner="coverage.py" />
+      <option name="SCRIPT_NAME" value="\\wsl.localhost\Ubuntu-22.04\home\liam\research\pso\PSO\pso_lib.py" />
       <option name="PARAMETERS" value="" />
       <option name="SHOW_COMMAND_LINE" value="false" />
       <option name="EMULATE_TERMINAL" value="false" />
@@ -235,7 +231,7 @@
       <item itemvalue="LaTeX.Compile" />
       <item itemvalue="Python.main" />
       <item itemvalue="Python.PSO Statistic Eval" />
-      <item itemvalue="Python.lib_pso" />
+      <item itemvalue="Python.pso_lib" />
       <item itemvalue="Python.pso_paper_static_eval" />
       <item itemvalue="Python.analysis" />
       <item itemvalue="Python.analysis (1)" />
@@ -243,7 +239,7 @@
     </list>
     <recent_temporary>
       <list>
-        <item itemvalue="Python.lib_pso" />
+        <item itemvalue="Python.pso_lib" />
         <item itemvalue="Python.pso_paper_static_eval" />
         <item itemvalue="Python.analysis" />
         <item itemvalue="Python.analysis (1)" />
@@ -301,7 +297,7 @@
       <workItem from="1775583576713" duration="2655000" />
       <workItem from="1775892357495" duration="4590000" />
       <workItem from="1776355698339" duration="6380000" />
-      <workItem from="1776593029556" duration="689000" />
+      <workItem from="1776593029556" duration="3683000" />
     </task>
     <task id="LOCAL-00001" summary="pso class">
       <option name="closed" value="true" />
@@ -479,11 +475,38 @@
       <option name="project" value="LOCAL" />
       <updated>1776359221099</updated>
     </task>
-    <option name="localTasksCounter" value="23" />
+    <task id="LOCAL-00023" summary="checkpoint">
+      <option name="closed" value="true" />
+      <created>1776594176770</created>
+      <option name="number" value="00023" />
+      <option name="presentableId" value="LOCAL-00023" />
+      <option name="project" value="LOCAL" />
+      <updated>1776594176770</updated>
+    </task>
+    <task id="LOCAL-00024" summary="checkpoint">
+      <option name="closed" value="true" />
+      <created>1776594303085</created>
+      <option name="number" value="00024" />
+      <option name="presentableId" value="LOCAL-00024" />
+      <option name="project" value="LOCAL" />
+      <updated>1776594303085</updated>
+    </task>
+    <option name="localTasksCounter" value="25" />
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">
     <option name="version" value="3" />
+  </component>
+  <component name="Vcs.Log.Tabs.Properties">
+    <option name="TAB_STATES">
+      <map>
+        <entry key="MAIN">
+          <value>
+            <State />
+          </value>
+        </entry>
+      </map>
+    </option>
   </component>
   <component name="VcsManagerConfiguration">
     <MESSAGE value="pso class" />
@@ -499,7 +522,7 @@
     <breakpoint-manager>
       <breakpoints>
         <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
-          <url>file://$PROJECT_DIR$/rl_train.py</url>
+          <url>file://$PROJECT_DIR$/RL/rl_train.py</url>
           <line>19</line>
           <option name="timeStamp" value="2" />
         </line-breakpoint>
