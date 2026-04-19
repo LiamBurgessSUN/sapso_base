@@ -5,16 +5,8 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="4ba59f72-512a-4ff3-b217-2cfe2d38bd17" name="Changes" comment="checkpoint">
-      <change afterPath="$PROJECT_DIR$/PSO/Lib_Swarm.py" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/PSO/__init__.py" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/PSO/utils.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/runConfigurations/PSO_Statistic_Eval.xml" beforeDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/PSO/swarm_eval.py" beforeDir="false" afterPath="$PROJECT_DIR$/eval/PSO/swarm_eval.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/eval/PSO/pso_lib.py" beforeDir="false" afterPath="$PROJECT_DIR$/eval/PSO/pso_lib.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/eval/results/analysis.py" beforeDir="false" afterPath="$PROJECT_DIR$/eval/results/analysis.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/eval/results/plots/__init__.py" beforeDir="false" afterPath="$PROJECT_DIR$/eval/results/plots/__init__.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/requirements.txt" beforeDir="false" afterPath="$PROJECT_DIR$/requirements.txt" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/PSO/Lib_Swarm.py" beforeDir="false" afterPath="$PROJECT_DIR$/PSO/Lib_Swarm.py" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -56,6 +48,7 @@
     "Python.lib_pso.executor": "Run",
     "Python.main.executor": "Run",
     "Python.pso_lib (1).executor": "Run",
+    "Python.pso_lib.executor": "Run",
     "Python.pso_paper_static_eval.executor": "Run",
     "Python.pso_statistic_eval.executor": "Run",
     "Python.pso_statistic_eval_grid.executor": "Run",
@@ -120,13 +113,38 @@
       <option name="INPUT_FILE" value="" />
       <method v="2" />
     </configuration>
+    <configuration name="pso_lib" type="PythonConfigurationType" factoryName="Python" temporary="true" nameIsGenerated="true">
+      <module name="pso" />
+      <option name="ENV_FILES" value="" />
+      <option name="INTERPRETER_OPTIONS" value="" />
+      <option name="PARENT_ENVS" value="true" />
+      <envs>
+        <env name="PYTHONUNBUFFERED" value="1" />
+      </envs>
+      <option name="SDK_HOME" value="" />
+      <option name="WORKING_DIRECTORY" value="$PROJECT_DIR$/eval/PSO" />
+      <option name="IS_MODULE_SDK" value="true" />
+      <option name="ADD_CONTENT_ROOTS" value="true" />
+      <option name="ADD_SOURCE_ROOTS" value="true" />
+      <EXTENSION ID="PythonCoverageRunConfigurationExtension" runner="coverage.py" />
+      <option name="SCRIPT_NAME" value="$PROJECT_DIR$/eval/PSO/pso_lib.py" />
+      <option name="PARAMETERS" value="" />
+      <option name="SHOW_COMMAND_LINE" value="false" />
+      <option name="EMULATE_TERMINAL" value="false" />
+      <option name="MODULE_MODE" value="false" />
+      <option name="REDIRECT_INPUT" value="false" />
+      <option name="INPUT_FILE" value="" />
+      <method v="2" />
+    </configuration>
     <list>
       <item itemvalue="LaTeX.Compile" />
       <item itemvalue="Python.analysis" />
+      <item itemvalue="Python.pso_lib" />
     </list>
     <recent_temporary>
       <list>
         <item itemvalue="Python.analysis" />
+        <item itemvalue="Python.pso_lib" />
       </list>
     </recent_temporary>
   </component>
@@ -180,7 +198,7 @@
       <workItem from="1775583576713" duration="2655000" />
       <workItem from="1775892357495" duration="4590000" />
       <workItem from="1776355698339" duration="6380000" />
-      <workItem from="1776593029556" duration="11252000" />
+      <workItem from="1776593029556" duration="12603000" />
     </task>
     <task id="LOCAL-00001" summary="pso class">
       <option name="closed" value="true" />
@@ -382,7 +400,15 @@
       <option name="project" value="LOCAL" />
       <updated>1776596947802</updated>
     </task>
-    <option name="localTasksCounter" value="26" />
+    <task id="LOCAL-00026" summary="checkpoint">
+      <option name="closed" value="true" />
+      <created>1776604476853</created>
+      <option name="number" value="00026" />
+      <option name="presentableId" value="LOCAL-00026" />
+      <option name="project" value="LOCAL" />
+      <updated>1776604476853</updated>
+    </task>
+    <option name="localTasksCounter" value="27" />
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">
@@ -418,11 +444,6 @@
           <option name="timeStamp" value="2" />
         </line-breakpoint>
         <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
-          <url>file://$PROJECT_DIR$/eval/PSO/pso_lib.py</url>
-          <line>41</line>
-          <option name="timeStamp" value="4" />
-        </line-breakpoint>
-        <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
           <url>file://$USER_HOME$/AppData/Local/JetBrains/PyCharm2024.3/remote_sources/-1831519743/-1464133439/pyswarms/backend/handlers.py</url>
           <line>533</line>
           <option name="timeStamp" value="5" />
@@ -431,6 +452,11 @@
           <url>file://$USER_HOME$/AppData/Local/JetBrains/PyCharm2024.3/remote_sources/-1831519743/-1464133439/pyswarms/backend/handlers.py</url>
           <line>436</line>
           <option name="timeStamp" value="7" />
+        </line-breakpoint>
+        <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
+          <url>file://$PROJECT_DIR$/PSO/Lib_Swarm.py</url>
+          <line>79</line>
+          <option name="timeStamp" value="9" />
         </line-breakpoint>
       </breakpoints>
     </breakpoint-manager>
@@ -443,6 +469,7 @@
   <component name="com.intellij.coverage.CoverageDataManagerImpl">
     <SUITE FILE_PATH="coverage/pso$pso_paper_static_eval.coverage" NAME="pso_paper_static_eval Coverage Results" MODIFIED="1776361465686" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="false" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$" />
     <SUITE FILE_PATH="coverage/pso$pso_statistic_eval.coverage" NAME="pso_statistic_eval Coverage Results" MODIFIED="1774978357992" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="false" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$" />
+    <SUITE FILE_PATH="coverage/pso$pso_lib.coverage" NAME="pso_lib Coverage Results" MODIFIED="1776605534038" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="false" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/eval/PSO" />
     <SUITE FILE_PATH="coverage/pso$swarm_eval.coverage" NAME="swarm_eval Coverage Results" MODIFIED="1773598474497" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="false" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$" />
     <SUITE FILE_PATH="coverage/pso$main.coverage" NAME="main Coverage Results" MODIFIED="1772999494873" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="false" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="C:\Users\Liam\Documents\Research\pso" />
     <SUITE FILE_PATH="coverage/pso$pso_lib__1_.coverage" NAME="pso_lib (1) Coverage Results" MODIFIED="1776604240387" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="false" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/eval/PSO" />
@@ -454,7 +481,7 @@
     <SUITE FILE_PATH="coverage/pso$df_utils.coverage" NAME="analysis Coverage Results" MODIFIED="1775895939839" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="false" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$" />
     <SUITE FILE_PATH="coverage/pso$pso_statistic_eval_grid.coverage" NAME="pso_statistic_eval_grid Coverage Results" MODIFIED="1775893607704" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="false" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$" />
     <SUITE FILE_PATH="coverage/pso$PSO_Statistic_Eval.coverage" NAME="PSO Statistic Eval Coverage Results" MODIFIED="1775585679275" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="false" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$" />
-    <SUITE FILE_PATH="coverage/pso$analysis.coverage" NAME="analysis Coverage Results" MODIFIED="1776604307239" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="false" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/eval/results" />
+    <SUITE FILE_PATH="coverage/pso$analysis.coverage" NAME="analysis Coverage Results" MODIFIED="1776605557112" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="false" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/eval/results" />
     <SUITE FILE_PATH="coverage/pso$RL.coverage" NAME="RL Coverage Results" MODIFIED="1772994254971" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="false" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$" />
     <SUITE FILE_PATH="coverage/pso$rl_eval.coverage" NAME="rl_eval Coverage Results" MODIFIED="1774175030801" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="false" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$" />
     <SUITE FILE_PATH="coverage/pso$lib_pso.coverage" NAME="lib_pso Coverage Results" MODIFIED="1776362728854" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="false" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$" />
